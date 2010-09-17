@@ -258,8 +258,10 @@ This means you have to define the defaults yourself. Here's how:
 
 This should look familiar to you:
 <pre>
+<code>
   Deny All
   Allow From 127.0.0.1
+</code>
 </pre>
 
 Jailson works the same. In order to open up selectivly you first need to place some general restriction.
