@@ -229,6 +229,53 @@ Jailson rules work with controller-names to overcome this.
 </code>
 </pre>
 
+h3. Any or any?
+
+There are two types of wildcards. One is for @actions@ and one is for @roles@.
+Here are the differences:
+
+<pre>
+<code>
+ 'Uploads/*' => array('uploader')
+</code>
+</pre>
+
+For any action defined in the UploadsController the requesting User must locked as 'uploader'. 
+
+<pre>
+<code>
+ 'Uploads/index' => array('*')
+</code>
+</pre>
+
+The action can be accessed by everyone. With a role or not.
+
+h3. The default is: There is no default
+
+The component acts transparent. So does the behavior. By default the @isAuthorized@ implementation 
+always grants access unless you say otherwise. It returns true if you don't provide anything. 
+This means you have to define the defaults yourself. Here's how:
+
+This should look familiar to you:
+<pre>
+  Deny All
+  Allow From 127.0.0.1
+</pre>
+
+Jailson works the same. In order to open up selectivly you first need to place some general restriction.
+
+<pre>
+<code>
+	'Jailson.AclAuth' => array(
+		'deny' => array('*'),
+		'allow' => array(
+			'index' => array('member')
+		)
+	)
+</code>
+</pre>
+
+Go nuts.
 
 h2. Current state
 
