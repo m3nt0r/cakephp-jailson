@@ -144,12 +144,12 @@ sole purpose of making code more readable. You can embrace or omit. It's up to y
 
 Here's a list of accepted suffixes with examples:
 
-* @_of@ // @member_of@
-* @_at@ // @located_at@
-* @_on@ // @based_on@
-* @_by@ // @referred_by@
-* @_for@ // @responsible_for@
-* @_in@ // @seen_in@
+* @_of@ example: @member_of@
+* @_at@ example: @located_at@
+* @_on@ example: @based_on@
+* @_by@ example: @referred_by@
+* @_for@ example: @responsible_for@
+* @_in@ example: @seen_in@
 
 Love it. Should give you some ideas on how to chain stuff.
 
