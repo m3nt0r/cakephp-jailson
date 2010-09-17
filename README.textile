@@ -114,7 +114,7 @@ h2. Who said we need Objects?
 
 Well, initially, i did.. What i liked most about ACLatraz was that you can just provide a object
 to setup the connection. But there may be cases where we just want to store a sublevel with a role. 
-Therefore Jailson allows to lock users to simple strings. 
+Therefore Jailson allows locking users to simple strings. 
 
 <pre>
 <code>
@@ -122,12 +122,11 @@ Therefore Jailson allows to lock users to simple strings.
 </code>
 </pre>
 
-After the first example i warned about the importance of the Model.id when working with objects.
-That is true for the User model, but not for the assigned model. Internally Jailson will figure
-out if or if not the passed object has an id. If not, it will just use the model name to create
-the connection.
+As a sidenote below the first example i emphasized the importance of the Model.id when working with objects.
+That is true for the User model, but not for the assigned model. Internally Jailson will figure out if or 
+if not the passed object has an id. If not, it will just use the model name to create the connection.
 
-That is the equivalent of writing:
+That would be the equivalent of writing:
 
 <pre>
 <code>
@@ -136,9 +135,9 @@ That is the equivalent of writing:
 </pre>
 
 
-h3. The semantics
+h2. The semantics
 
-As you might have noticed i am no using the intial role name at some points. Instead i am using "_at" or "_of"
+You might have noticed that i am no using the intial role name at some points. Instead i am using "_at" or "_of"
 in the code. This still yields to the initial role as this underscore suffix is removed internally and has the
 sole purpose of making code more readable. You can embrace or omit. It's up to you.
 
