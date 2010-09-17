@@ -257,6 +257,7 @@ always grants access unless you say otherwise. It returns true if you don't prov
 This means you have to define the defaults yourself. Here's how:
 
 This should look familiar to you:
+
 <pre>
 <code>
   Deny All
