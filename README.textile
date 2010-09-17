@@ -183,11 +183,11 @@ set the whole access setup in the @Controller::$components@ array. Yes, even on 
 </code>
 </pre>
 
-Okay.. the examples are not really _real world_ but i wanted to show all possible ways to define access.
+Okay.. the examples are not really real-world but i wanted to show all possible ways to define access.
 
 Lets go line by line:
 
-* @'ninja'@ - The currently logged in user needs to be _lockedAs_ "ninja" to gain access.
+* @'ninja'@ - The currently logged in user needs to be lockedAs "ninja" to gain access.
 * @'ninja' => array('killer')@ - Or, apart from being "ninja", must be sentenced as "killer"
 
 The system will try each rule top to bottom and stop on the first allowed and grant the access.
