@@ -1,0 +1,167 @@
+h1. Jailson for CakePHP
+
+A simple but highly flexible access control plugin with a human interface.
+
+h2. About the system
+
+The system is inspired (well, almost a port) of ACLatraz from Kriss Kowalik (github). I discovered 
+it while i was looking into Ruby/Padrino. I've read the readme and was blown away. But since
+i'm more a PHP guy i simply had to implement it with my app, one way or another. Born was Jailson.
+
+The plugin is basicly a Behavior which you throw at your User model. From there on out you can 
+use a bunch of short methods to group users and map them onto ressources (other models).
+
+Speaking of mapping: this is still just for access control. It wont give you any information
+about the model data. Just if there's an existing connection, or not. 
+
+h2. Basic Syntax
+
+I will skip the install text for now, and get to straight to it. 
+
+Let's assume we have two Objects. One is our User and one is something that needs some control.
+
+<pre>
+<code>
+  $this->User->id = '4c8b8d63-9ed4-449a-afe7-a7a6e9f4bebc';
+  $this->Project->id = '4c92dc36-c078-43f8-b8a8-89f2e9f4bebc';
+</code>
+</pre>
+
+h3. Talking Jailson
+
+Now, to make the (current) user the owner of the project model here, we simply write this:
+
+<pre>
+<code>
+  $this->User->lockAs('admin_of', $this->Project);
+</code>
+</pre>
+
+Simple, isn't it? And to verify that info at any point.
+
+<pre>
+<code>
+  $this->User->is('admin_of', $this->Project); // true
+	$this->User->isNot('admin_of', $this->Project); // false
+</code>
+</pre>
+
+The juice here is that the model objects have their id property set. I use 
+this info to make the connection and store the relationship.
+
+(well, you may omit it for this->Project, but i'll describe that later)
+
+h3. Working with arrays
+
+You can also assign multiple roles in one line.
+
+<pre>
+<code>
+  $this->User->lockAs(array('admin', 'member', 'reporter'), $this->Project);
+</code>
+</pre>
+
+And you can test multiple roles in one line. 
+
+<pre>
+<code>
+  $this->User->is(array('member', 'reporter'), $this->Project); // true
+  $this->User->is(array('member', 'reporter', 'watcher'), $this->Project); // false
+  $this->User->is(array('member', 'reporter', 'admin'), $this->Project); // true
+</code>
+</pre>
+
+h3. The logic switch
+
+You can skip the "lockAs" command, if you want, and just make it happen.
+
+<pre>
+<code>
+  $this->User->is('watcher_of', $this->Project, true); // where 'true' means: Create
+</code>
+</pre>
+
+The opposite is also possible, using the "isNot" command
+
+<pre>
+<code>
+  $this->User->isNot('watcher_of', $this->Project, true); // where 'true' means: Delete
+</code>
+</pre>
+
+h3. The simple stuff
+
+Above i've showed how you can relate someone to something. But what about simple role based grouping?
+
+<pre>
+<code>
+  $this->User->lockAs('client'); // .. easy
+      // or
+  $this->User->is('client', true);
+</code>
+</pre>
+
+Finally we want to delete stuff. Since we're talking Jailson there's a obvious command for that.
+
+<pre>
+<code>
+  $this->User->release('client'); // .. easy
+</code>
+</pre>
+
+
+h2. Who said we need Objects?
+
+Well, initially, i did.. What i liked most about ACLatraz was that you can just provide a object
+to setup the connection. But there may be cases where we just want to store a sublevel with a role. 
+Therefore Jailson allows to lock users to simple strings. 
+
+<pre>
+<code>
+  $this->User->lockAs('ninja_at', 'cakephp'); // .. or whatever you want
+</code>
+</pre>
+
+After the first example i warned about the importance of the Model.id when working with objects.
+That is true for the User model, but not for the assigned model. Internally Jailson will figure
+out if or if not the passed object has an id. If not, it will just use the model name to create
+the connection.
+
+That is the equivalent of writing:
+
+<pre>
+<code>
+  $this->User->lockAs('member', 'Project');
+</code>
+</pre>
+
+
+h3. The semantics
+
+As you might have noticed i am no using the intial role name at some points. Instead i am using "_at" or "_of"
+in the code. This still yields to the initial role as this underscore suffix is removed internally and has the
+sole purpose of making code more readable. You can embrace or omit. It's up to you.
+
+Here's a list of accepted suffixes with examples:
+
+* _of // member_of
+* _at // located_at
+* _on // based_on
+* _by // referred_by
+* _for // responsible_for
+* _in // seen_in
+
+Love it. Should give you some ideas on how to chain stuff.
+
+h2. Current state
+
+As this cake is still hot i wanna take some time to review the source and finetune the API.
+I am also planning an adapter for Auth or some other way of Controller integration. We'll see.
+
+Watch this repo. Write me a message. etc, etc. =) I am open for suggestions.
+
+h3. Contact
+
+http://twitter.com/m3nt0r
+or #cakephp @ irc
+
