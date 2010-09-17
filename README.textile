@@ -42,7 +42,7 @@ Simple, isn't it? And to verify that info at any point.
 <pre>
 <code>
   $this->User->is('admin_of', $this->Project); // true
-	$this->User->isNot('admin_of', $this->Project); // false
+  $this->User->isNot('admin_of', $this->Project); // false
 </code>
 </pre>
 
@@ -144,12 +144,12 @@ sole purpose of making code more readable. You can embrace or omit. It's up to y
 
 Here's a list of accepted suffixes with examples:
 
-* _of // member_of
-* _at // located_at
-* _on // based_on
-* _by // referred_by
-* _for // responsible_for
-* _in // seen_in
+* @_of@ // @member_of@
+* @_at@ // @located_at@
+* @_on@ // @based_on@
+* @_by@ // @referred_by@
+* @_for@ // @responsible_for@
+* @_in@ // @seen_in@
 
 Love it. Should give you some ideas on how to chain stuff.
 
