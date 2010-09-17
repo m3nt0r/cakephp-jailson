@@ -29,7 +29,7 @@ Let's assume we have two Objects. One is our User and one is something that need
 
 h3. Talking Jailson
 
-Now, to make the (current) user the owner of the project model here, we simply write this:
+Now, to make the (current) user the owner of the project model:
 
 <pre>
 <code>
@@ -105,7 +105,7 @@ Finally we want to delete stuff. Since we're talking Jailson there's a obvious c
 
 <pre>
 <code>
-  $this->User->release('client'); // .. easy
+  $this->User->release('client');
 </code>
 </pre>
 
@@ -135,7 +135,7 @@ That would be the equivalent of writing:
 </pre>
 
 
-h2. The semantics
+h2. The Semantics, or Why i really like this
 
 You might have noticed that i am no using the intial role name at some points. Instead i am using "_at" or "_of"
 in the code. This still yields to the initial role as this underscore suffix is removed internally and has the
@@ -150,7 +150,7 @@ Here's a list of accepted suffixes with examples:
 * @_for@ example: @responsible_for@
 * @_in@ example: @seen_in@
 
-Love it. Should give you some ideas on how to chain stuff.
+Should give you some ideas on how to chain stuff.
 
 h2. Current state
 
@@ -161,6 +161,7 @@ Watch this repo. Write me a message. etc, etc. =) I am open for suggestions.
 
 h3. Contact
 
-http://twitter.com/m3nt0r
-or #cakephp @ irc
+"http://twitter.com/m3nt0r":http://twitter.com/m3nt0r
+"http://cakealot.com":http://cakealot.com
+or at @#cakephp@ on freenode irc
 
