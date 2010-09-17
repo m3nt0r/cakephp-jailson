@@ -183,7 +183,8 @@ set the whole access setup in the @Controller::$components@ array. Yes, even on 
 </code>
 </pre>
 
-Okay.. the examples are not really real-world but i wanted to show all possible ways to define access.
+Okay, the examples are not really real-world but i wanted to show all possible ways you 
+may use to define access.
 
 Lets go line by line:
 
