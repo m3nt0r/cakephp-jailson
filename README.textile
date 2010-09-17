@@ -205,11 +205,35 @@ mixing in a simple array with a list of roles that all have to match.
 
 There we have our "AND" condition (so to speak).
 
+h3. AppController level
+
+You can choose where you add the component, just like any other component. This includes AppController.
+Of course AppController has no actions on it's own and just deny/allow all CRUD actions will be less flexible.
+
+Jailson rules work with controller-names to overcome this.
+
+<pre>
+<code>
+  // AppController
+
+  public $components = array(
+		'Jailson.AclAuth' => array(
+			'allow' => array(
+				'Users/dashboard' => array('member'),
+				'Users/delete' => array('admin'),
+				'Complaints/add' => array('reporter'),
+				'Uploads/*' => array('editor' => array('uploads'))
+			)
+		)
+  );
+</code>
+</pre>
+
 
 h2. Current state
 
 As this cake is still hot i wanna take some time to review the source and finetune the API.
-I am also planning an adapter for Auth or some other way of Controller integration. We'll see.
+Most recently i've added the component API to this document.
 
 Watch this repo. Write me a message. etc, etc. =) I am open for suggestions.
 
