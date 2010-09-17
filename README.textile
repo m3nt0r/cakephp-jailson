@@ -152,6 +152,59 @@ Here's a list of accepted suffixes with examples:
 
 Should give you some ideas on how to chain stuff.
 
+
+h2. Working with AuthComponent
+
+I chose a tight integration with the core component to make this whole thing pretty solid and versatile. 
+In the current implementation you won't need to configure anything if you already using the AuthComponent.
+
+h3. The Jailson ACL Component
+
+Once loaded it will auto configure the AuthComponent to work with it's very own version of isAuthorized(). 
+Thanks to all the options in Auth this is pretty straight forward. It will register itself as isAuthorized 
+handler object and leave everything else alone.
+
+Because i don't want to write is/isNot all the time (even though it makes code more readable), we can now
+set the whole access setup in the @Controller::$components@ array. Yes, even on AppController level.
+
+<pre>
+<code>
+  public $components = array(
+		'Jailson.AclAuth' => array(
+			'allow' => array(
+				'index' => array(
+					'ninja',
+					'ninja' => array('killer'),
+					array('samurai', 'warrior'),
+				)	
+			)
+		)
+  );
+</code>
+</pre>
+
+Okay.. the examples are not really _real world_ but i wanted to show all possible ways to define access.
+
+Lets go line by line:
+
+* @'ninja'@ - The currently logged in user needs to be _lockedAs_ "ninja" to gain access.
+* @'ninja' => array('killer')@ - Or, apart from being "ninja", must be sentenced as "killer"
+
+The system will try each rule top to bottom and stop on the first allowed and grant the access.
+You can look at it as a "OR" condition with an optional sublevel.
+
+  "Current user can access index action if ninja or ninja-killer"
+
+h3. The simple array with no key.
+
+In all previous examples it was just one role per line that has to match. We can break this by
+mixing in a simple array with a list of roles that all have to match.
+
+* @array('samurai', 'warrior')@ - The user must play ALL of these roles to get access.
+
+There we have our "AND" condition (so to speak).
+
+
 h2. Current state
 
 As this cake is still hot i wanna take some time to review the source and finetune the API.
