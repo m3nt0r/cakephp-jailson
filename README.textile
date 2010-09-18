@@ -134,6 +134,41 @@ There is a tree-style delete method which removes everything for given role/sent
 
 @->free()@ is also called in @afterDelete@ so that the database should clean itself up.
 
+h3. Reusing role informations
+
+There is also a method to retrieve all roles and additional information.
+
+<pre>
+<code>
+  $this->User->roles();
+</code>
+</pre>
+
+Returns a expanded array of all roles for the current user. Expanded means that it
+will return a @key > value@ result for each role. It will contain all data that was 
+provided when the role was written.
+
+<pre>
+<code>
+  // example result for $this->User->is('member_of', $this->Project)
+  array(
+    [inmate] => User
+    [inmate_id] => 24802
+    [role] => member
+    [subject] => Project
+    [subject_id] => 391
+  )
+</code>
+</pre>
+
+But since that's way to much information sometimes, there's a switch which will cause
+the method to return just a list of known roles.
+
+<pre>
+<code>
+  $this->User->roles( $justRolesPlz = true );
+</code>
+</pre>
 
 h2. Who said we need Objects?
 
