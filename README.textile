@@ -362,7 +362,7 @@ you're own profile in your @core.php@ and pass the name of the profile to the Be
 
 <pre>
 <code>
-  // in your core.php
+  // in your core.php (EXAMPLE!)
 
 	Cache::config('jailson', array(
 		'engine' => 'Apc',
@@ -371,7 +371,7 @@ you're own profile in your @core.php@ and pass the name of the profile to the Be
 		'prefix' =>  'inmate_',
  	));
 
-  // in the model
+  // tell Jailson about it
 
 	class User extends AppModel {
 		var $name = 'User';
@@ -385,10 +385,11 @@ you're own profile in your @core.php@ and pass the name of the profile to the Be
 
 h2. Current state
 
-As this cake is still hot i wanna take some time to review the source and finetune the API.
-Most recently i've added the component API to this document.
+This is the first draft. I've written everything from scratch. Everything 
+described in this document works for me on 1.3.3, but that doesn't imply that it 
+also does for you. I kept the source clean and simple tho. Consider it beta. ;) 
 
-Watch this repo. Write me a message. etc, etc. =) I am open for suggestions.
+Feel free to clone, fork and play around with it. Pull requests welcome!
 
 h3. Contact
 
@@ -396,3 +397,4 @@ h3. Contact
 "http://cakealot.com":http://cakealot.com
 or at @#cakephp@ on freenode irc
 
+Enjoy!
