@@ -96,7 +96,13 @@ Above i've showed how you can relate someone to something. But what about simple
 <pre>
 <code>
   $this->User->lockAs('client'); // .. easy
-      // or
+</code>
+</pre>
+
+Or using the logic switch
+
+<pre>
+<code>
   $this->User->is('client', true);
 </code>
 </pre>
@@ -108,6 +114,23 @@ Finally we want to delete stuff. Since we're talking Jailson there's a obvious c
   $this->User->release('client');
 </code>
 </pre>
+
+And a tree style delete which removes everything under the current object
+
+<pre>
+<code>
+	// remove /member/project/*
+  $this->User->free('member_in', 'Project');
+
+  // remove /member/*
+  $this->User->free('member');
+
+  // remove /*
+  $this->User->free();
+</code>
+</pre>
+
+@->free()@ is also called in @afterDelete@ so the database should clean itself up.
 
 
 h2. Who said we need Objects?
