@@ -260,8 +260,8 @@ This should look familiar to you:
 
 <pre>
 <code>
-  Deny All
-  Allow From 127.0.0.1
+	Deny All
+	Allow From 127.0.0.1
 </code>
 </pre>
 
@@ -279,6 +279,109 @@ Jailson works the same. In order to open up selectivly you first need to place s
 </pre>
 
 Go nuts.
+
+h2. Installation
+
+This is designed as a plugin. Go to the @plugins@ folder of your CakePHP application
+and issue the following commands. The last command will install the necessary table 
+to your database using CakeSchema. 
+
+<pre>
+<code>
+  cd app/plugins
+  git clone git://github.com/m3nt0r/cakephp-jailson.git jailson
+  cake schema create jailson -plugin jailson
+</code>
+</pre>
+
+If you don't have git, you can download the source as a zip file and extract it
+into a new folder called 'jailson' within plugins.
+
+h2. Setup
+
+Open up the model that you want to treat as Inmate.
+
+<pre>
+<code>
+	class User extends AppModel {
+		var $name = 'User';
+		var $actsAs = array(
+			'Jailson.Inmate'
+		);
+	}
+</code>
+</pre>
+
+Done.
+
+h3. Optional Step: Combine with AuthComponent
+
+<pre>
+<code>
+	class AppController extends Controller {
+		var $components = array(
+			'Auth', 'Jailson.AclAuth' => array(
+				// your options
+			)
+		);
+	}
+</code>
+</pre>
+
+This is an example. You can include the AclAuthComponent on controllers individually,
+as i described above. The only requirment is the presence of AuthComponent that is using 
+a userModel as provider (Default Behavior). 
+
+Given we have Auth in our AppController at all times you can add AclAuth everywhere.
+
+<pre>
+<code>
+	class DownloadsController extends AppController {
+		var $name = 'Downloads';
+		var $components = array(
+			'Jailson.AclAuth' => array(
+				'deny' => array('*'),
+				'allow' => array(
+					'index' => array('subscribers')
+				)
+			)
+		);
+	}
+</code>
+</pre>
+
+
+h3. Tuning, i mean... cache.
+
+I've implemented a lazy caching model within all queries. Every object (user) has his
+own tiny cache file. That way we dont hit the database every time if we already know 
+that the user has access.
+
+The caching is done using the core Cache class and the 'default' profile. You can make
+you're own profile in your @core.php@ and pass the name of the profile to the Behavior.
+
+<pre>
+<code>
+  // in your core.php
+
+	Cache::config('jailson', array(
+		'engine' => 'Apc',
+		'duration'=> 60000, 
+		'probability'=> 100,
+		'prefix' =>  'inmate_',
+ 	));
+
+  // in the model
+
+	class User extends AppModel {
+		var $name = 'User';
+		var $actsAs = array(
+			'Jailson.Inmate' => array('cacheConfig' => 'jailson')
+		);
+	}
+</code>
+</pre>
+
 
 h2. Current state
 
