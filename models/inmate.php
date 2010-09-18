@@ -4,7 +4,7 @@
  *   Access Control Plugin
  * 
  * @category	CakePHP
- * @author 		Kjell Bublitz <m3nt0r.de@gmail.com>
+ * @author		Kjell Bublitz <m3nt0r.de@gmail.com>
  * @package 	plugins.jailson
  * @subpackage 	plugins.jailson.models
  * @license 	MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -16,7 +16,7 @@ App::import('Core', 'Set');
  * Jailson.Inmate - Model
  * 
  * @category	CakePHP
- * @author 		Kjell Bublitz <m3nt0r.de@gmail.com>
+ * @author		Kjell Bublitz <m3nt0r.de@gmail.com>
  * @package 	plugins.jailson
  * @subpackage 	plugins.jailson.models
  */
