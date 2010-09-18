@@ -115,7 +115,9 @@ Finally we want to delete stuff. Since we're talking Jailson there's a obvious c
 </code>
 </pre>
 
-And a tree style delete which removes everything under the current object
+h3. Recursive operation
+
+There is a tree-style delete method which removes everything for given role/sentence called "free!".
 
 <pre>
 <code>
@@ -130,7 +132,7 @@ And a tree style delete which removes everything under the current object
 </code>
 </pre>
 
-@->free()@ is also called in @afterDelete@ so the database should clean itself up.
+@->free()@ is also called in @afterDelete@ so that the database should clean itself up.
 
 
 h2. Who said we need Objects?
