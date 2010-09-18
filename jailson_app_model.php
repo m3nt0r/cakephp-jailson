@@ -10,7 +10,6 @@
  * @license 	MIT License (http://www.opensource.org/licenses/mit-license.php)
  * @link 		http://github.com/m3nt0r/cakephp-jailson Repository/Docs
  */
-
 /**
  * Jailson - App Model
  * 
