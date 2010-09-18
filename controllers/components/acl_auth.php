@@ -3,20 +3,20 @@
  * Jailson for CakePHP
  *   Access Control Plugin
  * 
- * @category	CakePHP
- * @author		Kjell Bublitz <m3nt0r.de@gmail.com>
- * @package 	plugins.jailson
- * @subpackage 	plugins.jailson.controllers.components
- * @license 	MIT License (http://www.opensource.org/licenses/mit-license.php)
- * @link 		http://github.com/m3nt0r/cakephp-jailson Repository/Docs
+ * @category CakePHP
+ * @author Kjell Bublitz <m3nt0r.de@gmail.com>
+ * @package plugins.jailson
+ * @subpackage plugins.jailson.components
+ * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @link http://github.com/m3nt0r/cakephp-jailson Repository/Docs
  */
 /**
- * Jailson.Acl - Component
+ * Jailson - Acl Auth Component
  * 
- * @category	CakePHP
- * @author		Kjell Bublitz <m3nt0r.de@gmail.com>
- * @package 	plugins.jailson
- * @subpackage 	plugins.jailson.controllers.components
+ * @category CakePHP
+ * @author Kjell Bublitz <m3nt0r.de@gmail.com>
+ * @package plugins.jailson
+ * @subpackage plugins.jailson.components
  */
 class AclAuthComponent extends Object {
 	

@@ -3,20 +3,20 @@
  * Jailson for CakePHP
  *   Access Control Plugin
  * 
- * @category	CakePHP
- * @author		Kjell Bublitz <m3nt0r.de@gmail.com>
- * @package 	plugins.jailson
- * @subpackage 	plugins.jailson.behaviors
- * @license 	MIT License (http://www.opensource.org/licenses/mit-license.php)
- * @link 		http://github.com/m3nt0r/cakephp-jailson Repository/Docs
+ * @category CakePHP
+ * @author Kjell Bublitz <m3nt0r.de@gmail.com>
+ * @package plugins.jailson
+ * @subpackage plugins.jailson.behaviors
+ * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @link http://github.com/m3nt0r/cakephp-jailson Repository/Docs
  */
 /**
- * Jailson.Inmate - Model Behavior
+ * Jailson - Inmate Behavior
  * 
- * @category	CakePHP
- * @author		Kjell Bublitz <m3nt0r.de@gmail.com>
- * @package 	plugins.jailson
- * @subpackage 	plugins.jailson.behaviors
+ * @category CakePHP
+ * @author Kjell Bublitz <m3nt0r.de@gmail.com>
+ * @package plugins.jailson
+ * @subpackage plugins.jailson.behaviors
  */
 class InmateBehavior extends ModelBehavior {
 	
