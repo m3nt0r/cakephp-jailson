@@ -168,10 +168,12 @@ class AclAuthComponent extends Object {
 		foreach ($required as $role => $rule) {
 			if (is_array($rule) && !is_numeric($role)) {					
 				$arguments = array_merge(array($role), $rule);
+			} elseif (is_string($rule) && !is_numeric($role)) {					
+				$arguments = array_merge(array($role), array($rule));
 			} else {
 				$arguments = array($rule);
 			}
-			$results[] = call_user_func_array(array($userModel, 'has'), $arguments);
+			$results[] = call_user_func_array(array($userModel, 'is'), $arguments);
 		}
 		
 		return in_array($test, $results, $strict=true);
