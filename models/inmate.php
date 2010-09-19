@@ -56,7 +56,8 @@ class Inmate extends JailsonAppModel {
 		$result = (array) $this->find('all', array(
 			'fields' => array("{$this->alias}.key"),
 			'conditions' => array("{$this->alias}.key" => $keys),	
-			'recursive' => -1
+			'recursive' => -1,
+			'order' => array("{$this->alias}.key" => 'ASC')
 		));
 		return Set::extract("/{$this->alias}/key", $result);
 	}
@@ -71,7 +72,8 @@ class Inmate extends JailsonAppModel {
 		if (empty($partialKey)) return array();
 		$result = (array) $this->find('all', array(
 			'conditions' => array("{$this->alias}.key LIKE" => $partialKey . '%'),	
-			'recursive' => -1
+			'recursive' => -1,
+			'order' => array("{$this->alias}.key" => 'ASC')
 		));
 		return Set::extract("/{$this->alias}/key", $result);
 	}
@@ -88,7 +90,8 @@ class Inmate extends JailsonAppModel {
 		
 		$result = $this->find('all', array(
 			'conditions' => array("{$this->alias}.key" => $keys),	
-			'recursive' => -1
+			'recursive' => -1,
+			'order' => array("{$this->alias}.key" => 'ASC')
 		));
 		if (!$result) return array();
 		
@@ -116,7 +119,8 @@ class Inmate extends JailsonAppModel {
 		if (empty($partialKey)) return array();
 		$result = (array) $this->find('all', array(
 			'conditions' => array("{$this->alias}.key LIKE" => $partialKey . '%'),	
-			'recursive' => -1
+			'recursive' => -1,
+			'order' => array("{$this->alias}.key" => 'ASC')
 		));
 		if (!$result) return array();
 		
