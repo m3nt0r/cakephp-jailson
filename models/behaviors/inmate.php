@@ -44,11 +44,17 @@ class InmateBehavior extends ModelBehavior {
 	public $Inmate;
 	
 	/**
+	 * Name of the storage model for loading
+	 * @var string
+	 */
+	public $inmateModel = 'Jailson.Inmate';
+	
+	/**
 	 * Init Storage Model
 	 */
 	function setup($model, $config = array()) {
 		if (!is_object($this->Inmate)) {
-			$this->Inmate = ClassRegistry::init('Jailson.Inmate');
+			$this->Inmate = ClassRegistry::init($this->inmateModel);
 		}
 		
 		// options
