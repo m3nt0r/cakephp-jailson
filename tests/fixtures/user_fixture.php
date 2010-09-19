@@ -17,13 +17,16 @@ class UserFixture extends CakeTestFixture {
 
 	public $fields = array( 
 		'id' => array('type' => 'integer', 'key' => 'primary'), 
-		'name' => array('type' => 'string', 'length' => 255, 'null' => false)
+		'username' => array('type' => 'string', 'length' => 255, 'null' => false),
+		'password' => array('type' => 'string', 'length' => 255, 'null' => false)
 	); 
 	public $records = array( 
-		array ('id' => 1, 'name' => 'John'), 
-		array ('id' => 2, 'name' => 'Paul'), 
-		array ('id' => 3, 'name' => 'George'),
-		array ('id' => 4, 'name' => 'Ringo'),
+		array ('id' => 1, 'username' => 'John', 'password' => '40b722104a7c1e78e96fb7bd56d9ef2d4856691c'), 
+		array ('id' => 2, 'username' => 'Paul', 'password' => '40b722104a7c1e78e96fb7bd56d9ef2d4856691c'), 
+		array ('id' => 3, 'username' => 'George', 'password' => '40b722104a7c1e78e96fb7bd56d9ef2d4856691c'),
+		array ('id' => 4, 'username' => 'Ringo', 'password' => '40b722104a7c1e78e96fb7bd56d9ef2d4856691c'),
 	); 
+	
+	// password = 'test';
 } 
 ?>
