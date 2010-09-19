@@ -470,8 +470,6 @@ class UserTestCase extends CakeTestCase {
 		
 		$this->User->id = 1;
 		
-		
-		
 		// single
 		$result = $this->User->isNot('singer');
 		$this->assertFalse($result);
@@ -600,5 +598,370 @@ class UserTestCase extends CakeTestCase {
 		$result = $this->User->isNot(array('member_in'), $this->Project);
 		$this->assertTrue($result);
 	}
+	
+	# =================================================
+	# Inmate::roles()
+	# =================================================
+	
+	public function testRoles() {
+		
+		$this->User->id = 1;
+		
+		$result = $this->User->roles();
+		$expected = array(
+			'singer' => array(
+				array(
+					'inmate' => 'TestUser',
+					'inmate_id' => '1',
+					'role' => 'singer',
+				),array(
+					'inmate' => 'TestUser',
+					'inmate_id' => '1',
+					'role' => 'singer',
+					'subject' => 'pianist',
+				)
+			)
+		);
+		$this->assertEqual($result, $expected);
+		
+		$result = $this->User->roles( $justRoles = true );
+		$expected = array(
+			'singer'
+		);
+		$this->assertEqual($result, $expected);
+	}
+	
+	
+	# =================================================
+	# Inmate::release()
+	# =================================================
+	
+	public function testRelease() {
+		
+		$this->User->id = 1;
+		
+		// just delete /singer
+		$result = $this->User->release('singer');
+		$this->assertTrue($result);
+		
+		// so /singer/pianist is still there, right?
+		$result = $this->User->is('singer', 'pianist');
+		$this->assertTrue($result);
+		
+		// And should be the only one left
+		$result = $this->User->roles();
+		$expected = array(
+			'singer' => array(
+				array(
+					'inmate' => 'TestUser',
+					'inmate_id' => '1',
+					'role' => 'singer',
+					'subject' => 'pianist',
+				)
+			)
+		);
+		$this->assertEqual($result, $expected);
+	}
+	
+	public function testReleaseArray() {
+		
+		$this->User->id = 1;
+		
+		// just delete /singer
+		$result = $this->User->release(array('singer'));
+		$this->assertTrue($result);
+		
+		// And should be the only one left
+		$result = $this->User->roles();
+		$expected = array(
+			'singer' => array(
+				array(
+					'inmate' => 'TestUser',
+					'inmate_id' => '1',
+					'role' => 'singer',
+					'subject' => 'pianist',
+				)
+			)
+		);
+		$this->assertEqual($result, $expected);
+	}
+	
+	# =================================================
+	# Inmate::free()
+	# =================================================
+	
+	public function testFree() {
+		
+		$this->User->id = 1;
+		
+		// we've tested this enough.. just create some more data
+		$this->User->is('singer', 'tenor', true);
+		$this->User->is('singer', 'live', true);
+		
+		
+		$this->Project->id = 1;
+		$this->User->is('member', $this->Project, true);
+		$this->Project->id = 2;
+		$this->User->is('member', $this->Project, true);
+		$this->Project->id = 3;
+		$this->User->is('member', $this->Project, true);
+		
+		
+		$result = $this->User->roles();
+		$expected = array(
+			'member' => array(
+				array(
+					'inmate' => 'TestUser',
+					'inmate_id' => '1',
+					'role' => 'member',
+					'subject' => 'TestProject',
+					'subject_id' => '1'
+				),array(
+					'inmate' => 'TestUser',
+					'inmate_id' => '1',
+					'role' => 'member',
+					'subject' => 'TestProject',
+					'subject_id' => '2'
+				),array(
+					'inmate' => 'TestUser',
+					'inmate_id' => '1',
+					'role' => 'member',
+					'subject' => 'TestProject',
+					'subject_id' => '3'
+				)
+			),
+			'singer' => array(
+				array(
+					'inmate' => 'TestUser',
+					'inmate_id' => '1',
+					'role' => 'singer',
+				),array(
+					'inmate' => 'TestUser',
+					'inmate_id' => '1',
+					'role' => 'singer',
+					'subject' => 'live',
+				),array(
+					'inmate' => 'TestUser',
+					'inmate_id' => '1',
+					'role' => 'singer',
+					'subject' => 'pianist',
+				),array(
+					'inmate' => 'TestUser',
+					'inmate_id' => '1',
+					'role' => 'singer',
+					'subject' => 'tenor',
+				),
+			),
+		);
+		$this->assertEqual($result, $expected);
+		
+		
+		// free string subject
+		$result = $this->User->free('singer', 'pianist');
+		$expected = array(
+			array(
+				'inmate' => 'TestUser',
+				'inmate_id' => '1',
+				'role' => 'singer',
+				'subject' => 'pianist',
+			)	
+		);
+		$this->assertEqual($result, $expected);
+		
+		// is it "free"?
+		$result = $this->User->isNot('singer', 'pianist');
+		$this->assertTrue($result);
+		
+		// add it back in
+		$this->User->is('singer', 'pianist', true);
+		
+		// free all "singer" roles
+		$result = $this->User->free('singer');
+		$expected = array(
+			array(
+				'inmate' => 'TestUser',
+				'inmate_id' => '1',
+				'role' => 'singer',
+			),array(
+				'inmate' => 'TestUser',
+				'inmate_id' => '1',
+				'role' => 'singer',
+				'subject' => 'live',
+			),array(
+				'inmate' => 'TestUser',
+				'inmate_id' => '1',
+				'role' => 'singer',
+				'subject' => 'pianist',
+			),array(
+				'inmate' => 'TestUser',
+				'inmate_id' => '1',
+				'role' => 'singer',
+				'subject' => 'tenor',
+			)
+		);
+		$this->assertEqual($result, $expected);
+		
+		// free all "Project" regardless of ID
+		$result = $this->User->free('member', 'TestProject');
+		$expected = array(
+			array(
+				'inmate' => 'TestUser',
+				'inmate_id' => '1',
+				'role' => 'member',
+				'subject' => 'TestProject',
+				'subject_id' => '1'
+			),array(
+				'inmate' => 'TestUser',
+				'inmate_id' => '1',
+				'role' => 'member',
+				'subject' => 'TestProject',
+				'subject_id' => '2'
+			),array(
+				'inmate' => 'TestUser',
+				'inmate_id' => '1',
+				'role' => 'member',
+				'subject' => 'TestProject',
+				'subject_id' => '3'
+			)
+		);		
+		$this->assertEqual($result, $expected);
+		
+		$this->Project->id = 1;
+		$this->User->is('member', $this->Project, true);
+		$this->Project->id = 2;
+		$this->User->is('member', $this->Project, true);
+		$this->Project->id = 3;
+		$this->User->is('member', $this->Project, true);
+		
+		// free all "member" AND "Project"
+		$result = $this->User->free('member');
+		$expected = array(
+			array(
+				'inmate' => 'TestUser',
+				'inmate_id' => '1',
+				'role' => 'member',
+				'subject' => 'TestProject',
+				'subject_id' => '1'
+			),array(
+				'inmate' => 'TestUser',
+				'inmate_id' => '1',
+				'role' => 'member',
+				'subject' => 'TestProject',
+				'subject_id' => '2'
+			),array(
+				'inmate' => 'TestUser',
+				'inmate_id' => '1',
+				'role' => 'member',
+				'subject' => 'TestProject',
+				'subject_id' => '3'
+			)
+		);		
+		$this->assertEqual($result, $expected);
+		
+		$this->User->is('singer', true);
+		$this->User->is('singer', 'pianist', true);
+		$this->User->is('singer', 'tenor', true);
+		$this->User->is('singer', 'live', true);
+		$this->Project->id = 1;
+		$this->User->is('member', $this->Project, true);
+		$this->Project->id = 2;
+		$this->User->is('member', $this->Project, true);
+		$this->Project->id = 3;
+		$this->User->is('member', $this->Project, true);
+		
+		$result = $this->User->roles();
+		$expected = array(
+			'member' => array(
+				array(
+					'inmate' => 'TestUser',
+					'inmate_id' => '1',
+					'role' => 'member',
+					'subject' => 'TestProject',
+					'subject_id' => '1'
+				),array(
+					'inmate' => 'TestUser',
+					'inmate_id' => '1',
+					'role' => 'member',
+					'subject' => 'TestProject',
+					'subject_id' => '2'
+				),array(
+					'inmate' => 'TestUser',
+					'inmate_id' => '1',
+					'role' => 'member',
+					'subject' => 'TestProject',
+					'subject_id' => '3'
+				)
+			),
+			'singer' => array(
+				array(
+					'inmate' => 'TestUser',
+					'inmate_id' => '1',
+					'role' => 'singer',
+				),array(
+					'inmate' => 'TestUser',
+					'inmate_id' => '1',
+					'role' => 'singer',
+					'subject' => 'live',
+				),array(
+					'inmate' => 'TestUser',
+					'inmate_id' => '1',
+					'role' => 'singer',
+					'subject' => 'pianist',
+				),array(
+					'inmate' => 'TestUser',
+					'inmate_id' => '1',
+					'role' => 'singer',
+					'subject' => 'tenor',
+				),
+			),
+		);
+		$this->assertEqual($result, $expected);
+		
+		// free everything
+		$result = $this->User->free();
+		$expected = array(
+			array(
+				'inmate' => 'TestUser',
+				'inmate_id' => '1',
+				'role' => 'member',
+				'subject' => 'TestProject',
+				'subject_id' => '1'
+			),array(
+				'inmate' => 'TestUser',
+				'inmate_id' => '1',
+				'role' => 'member',
+				'subject' => 'TestProject',
+				'subject_id' => '2'
+			),array(
+				'inmate' => 'TestUser',
+				'inmate_id' => '1',
+				'role' => 'member',
+				'subject' => 'TestProject',
+				'subject_id' => '3'
+			),array(
+				'inmate' => 'TestUser',
+				'inmate_id' => '1',
+				'role' => 'singer',
+			),array(
+				'inmate' => 'TestUser',
+				'inmate_id' => '1',
+				'role' => 'singer',
+				'subject' => 'live',
+			),array(
+				'inmate' => 'TestUser',
+				'inmate_id' => '1',
+				'role' => 'singer',
+				'subject' => 'pianist',
+			),array(
+				'inmate' => 'TestUser',
+				'inmate_id' => '1',
+				'role' => 'singer',
+				'subject' => 'tenor',
+			),
+		);		
+		$this->assertEqual($result, $expected);
+		
+	}
+	
 }
 ?>
