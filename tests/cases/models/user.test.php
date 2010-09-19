@@ -252,5 +252,109 @@ class UserTestCase extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 	
+	
+	# =================================================
+	# Inmate::has()
+	# =================================================
+	
+	public function testHas() {
+		
+		$this->User->id = 1;
+		
+		$result = $this->User->has('singer');
+		$this->assertTrue($result);
+		
+		$result = $this->User->has('cheezburger');
+		$this->assertFalse($result);
+		
+		$result = $this->User->has('singer', 'pianist');
+		$this->assertTrue($result);
+		
+		$result = $this->User->has(array('singer'));
+		$this->assertTrue($result);
+		
+		$result = $this->User->has(array('singer'), 'pianist');
+		$this->assertTrue($result);
+		
+		// not writer
+		$result = $this->User->has(array('singer', 'writer'));
+		$this->assertFalse($result);
+		
+		// lock as writer
+		$result = $this->User->lockAs('writer');
+		$expected = array(
+			array(
+				'inmate' => 'TestUser',
+				'inmate_id' => '1',
+				'role' => 'writer'
+			)
+		);
+		$this->assertEqual($result, $expected);
+		
+		// is also in writer
+		$result = $this->User->has(array('singer', 'writer'));
+		$this->assertTrue($result);
+	}
+	
+	public function testHasObject() {
+		
+		$this->User->id = 1;
+		$this->Project->id = 1;
+		
+		// add user to object
+		$result = $this->User->lockAs('member', $this->Project);
+		$expected = array(
+			array(
+				'inmate' => 'TestUser',
+				'inmate_id' => '1',
+				'role' => 'member',
+				'subject' => 'TestProject',
+				'subject_id' => '1'
+			)
+		);
+		$this->assertEqual($result, $expected);
+		
+		// test object relationship
+		$result = $this->User->has('member', $this->Project);
+		$this->assertTrue($result);
+		
+		
+		// test object relationship, different object
+		$this->Project->id = 2;
+		$result = $this->User->has('member', $this->Project);
+		$this->assertFalse($result);
+		
+		// test object relationship, anon object
+		$this->Project->id = null;
+		$result = $this->User->has('member', $this->Project);
+		$this->assertFalse($result);
+		
+		// add another role to same object as the first test
+		$this->Project->id = 1;
+		$result = $this->User->lockAs('owner', $this->Project);
+		$expected = array(
+			array(
+				'inmate' => 'TestUser',
+				'inmate_id' => '1',
+				'role' => 'owner',
+				'subject' => 'TestProject',
+				'subject_id' => '1'
+			)
+		);
+		$this->assertEqual($result, $expected);	
+		
+		// test multiple roles on object
+		
+		$result = $this->User->has(array('owner'), $this->Project);
+		$this->assertTrue($result);
+		
+		$result = $this->User->has(array('member','owner'), $this->Project);
+		$this->assertTrue($result);
+		
+		$result = $this->User->has(array('member','owner', 'solo'), $this->Project);
+		$this->assertFalse($result);
+	}
+	
+	
 }
 ?>
