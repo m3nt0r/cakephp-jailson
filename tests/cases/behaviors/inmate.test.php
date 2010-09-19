@@ -90,14 +90,10 @@ class InmateBehaviorTest extends CakeTestCase {
 		'plugin.jailson.project',
 		'plugin.jailson.user'
 	);
-	public $User;
 	
-	public function startTest() {
-		$this->User = new TestUser();
-	}
-	public function endTest() {
-		unset($this->User);
-	}
+	# =================================================
+	# InmateBehavior::_pack()
+	# =================================================
 	
 	public function testPack() {
 		
@@ -126,6 +122,10 @@ class InmateBehaviorTest extends CakeTestCase {
 		);
 		$this->assertEqual($results, $expected);
 	}
+	
+	# =================================================
+	# InmateBehavior::_unpack()
+	# =================================================
 	
 	public function testUnPack() {
 		
@@ -210,7 +210,9 @@ class InmateBehaviorTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 		
-				
+		// no need to test > /5
+		// the php compiler would complain in that case
+		// since the array doesn't match _packStruct
 	}
 }
 ?>
