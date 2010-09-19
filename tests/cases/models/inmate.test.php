@@ -64,13 +64,13 @@ class InmateTestCase extends CakeTestCase {
 		$expected = array( 
 		);
 		$this->assertEqual($result, $expected);
-    }
+	}
 
 	# =================================================
 	# Inmate::retrieve()
 	# =================================================
 	
-    public function testRetrieve() {
+	public function testRetrieve() {
 	
 		// string query
 		$result = $this->Inmate->retrieve('Testuser/1/singer');
@@ -97,7 +97,7 @@ class InmateTestCase extends CakeTestCase {
 	    $expected = array( 
 		);
 		$this->assertEqual($result, $expected);
-    }
+	}
 
 	# =================================================
 	# Inmate::store()
