@@ -79,6 +79,7 @@ class AclAuthComponent extends Object {
 		}
 	}
 	
+	
 	/**
 	 * Called by AuthComponent
 	 * 
@@ -89,11 +90,12 @@ class AclAuthComponent extends Object {
 	 * @return boolean True if $user is authorized, otherwise false
 	 */
 	public function isAuthorized($user, $controller, $action) {
-		
 		$userModel = $this->_Auth->getModel();
 		$userModel->id = $user[$this->_Auth->userModel]['id'];
 		
-		$currentPath = $controller .'/'. $action;
+		if (!is_array($userModel->actsAs) || (!array_key_exists('Jailson.Inmate', $userModel->actsAs) && !in_array('Jailson.Inmate', $userModel->actsAs))) {
+			trigger_error(__("Looks like your userModel is missing the behavior. Please include 'Jailson.Inmate' in {$userModel->name}::\$actsAs.", true), E_USER_WARNING);
+		}
 		
 		if (!empty($this->__settings['deny'])) {
 			$this->deny = $this->_normalizePermissions($this->deny, $this->__settings['deny']);
@@ -102,25 +104,8 @@ class AclAuthComponent extends Object {
 			$this->allow = $this->_normalizePermissions($this->allow, $this->__settings['allow']);
 		}
 		
-		// process denied
-		if (array_key_exists($currentPath, $this->deny)) {
-			$required = $this->deny[$currentPath];
-			if (in_array('*', $required)) {
-				return false; // deny any role
-			}
-			return $this->_dispatch($userModel, 'isNot', $required);
-		}
+		$currentPath = $controller .'/'. $action;
 		
-		// process allowed
-		if (array_key_exists($currentPath, $this->allow)) {
-			$required = $this->allow[$currentPath];
-			if (in_array('*', $required)) {
-				return true; // allow any role
-			}
-			return $this->_dispatch($userModel, 'is', $required);
-		}
-		
-		// process controller wildcard
 		if (array_key_exists("{$controller}/*", $this->allow)) {
 			return true; // the entire controller is allowed
 		}
@@ -128,48 +113,68 @@ class AclAuthComponent extends Object {
 			return false; // the entire controller is denied
 		}
 		
-		return true; // not controlled by acl
-	}
-	
-	/**
-	 * Call Jailson behavior method with role config
-	 * 
-	 * @param	object	$userModel	Model using the Inmate behavior
-	 * @param	string	$method		Name of the method
-	 * @param	array	$required	Role config array
-	 * 
-	 * @return	boolean	casted bool result of $method
-	 * 
-	 * @todo add support for sentences in AND-style role matching (array('foo' => array('bar'), 'baz', 'etc'))
-	 */
-	protected function _dispatch($userModel, $method, $required) {
-		$result = false;
-		$results = array();		
+		$allowAll = false;
+		$denyAll = false;
 		
-		if (!is_array($userModel->actsAs) || (!array_key_exists('Jailson.Inmate', $userModel->actsAs) && !in_array('Jailson.Inmate', $userModel->actsAs))) {
-			trigger_error(__("Looks like your userModel is missing the behavior. Please include 'Jailson.Inmate' in {$userModel->name}::\$actsAs.", true), E_USER_WARNING);
+		$permissions = array(
+			'deny' => 'null',
+			'allow' => 'null'
+		);
+		
+		// process denied
+		if (array_key_exists($currentPath, $this->deny)) {
+			$required = $this->deny[$currentPath];
+			if (in_array('*', $required)) {
+				$permissions['deny'] = true;
+				$denyAll = true;
+			} else {
+				$permissions['deny'] = $this->_assert($userModel, $required, true);
+			}
 		}
 		
+		// process allowed
+		if (array_key_exists($currentPath, $this->allow)) {
+			$required = $this->allow[$currentPath];
+			if (in_array('*', $required)) {
+				$permissions['allow'] = true;
+				$allowAll = true;
+			} else {
+				$permissions['allow'] = $this->_assert($userModel, $required, true);
+			}
+		}
+
+		if ($permissions['allow'] === true && $permissions['deny'] === true) {
+			if ($denyAll) {
+				return true;
+			}
+			return false;
+		}
+		if ($permissions['deny'] === true) {
+			return false;
+		}
+		if ($permissions['allow'] === false && $permissions['deny'] === false) {
+			return false;
+		}
+		if ($permissions['allow'] === false) {
+			return false;
+		}
+
+		return true;
+	}
+	
+	protected function _assert($userModel, $required, $test = false) {
+		
+		$results = array();	
 		foreach ($required as $role => $rule) {
 			if (is_array($rule) && !is_numeric($role)) {					
 				$arguments = array_merge(array($role), $rule);
 			} else {
 				$arguments = array($rule);
 			}
-			
-			$results[] = call_user_func_array(array($userModel, $method), $arguments);
+			$results[] = call_user_func_array(array($userModel, 'has'), $arguments);
 		}
 		
-		if ($method == 'is') {
-			$result = in_array(true, $results, $strict=true);
-		}
-		
-		if ($method == 'isNot') {
-			// if there's any false, the result becomes true again
-			$result = !in_array(false, $results, $strict=true);
-		}
-		
-		return (bool) $result;
+		return in_array($test, $results, $strict=true);
 	}
 	
 	/**

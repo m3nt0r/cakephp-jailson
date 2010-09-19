@@ -564,13 +564,90 @@ class AclAuthTest extends CakeTestCase {
 		$this->assertFalse($result);
 	}
 	
+	# =================================================
+	# Testing combinations
+	# =================================================
+	
+	function testMatch_AllowOne_DenyOne() {
+		$this->__login();
+		
+		// check if authed user has 'singer' role in DB
+		$testUser = new TestUser();
+		$testUser->id = $this->Controller->TestAuth->user('id');
+		$roles = $testUser->roles(true);
+		$this->assertTrue(in_array('singer', $roles));
+		
+		// allow 'singer', but deny 'something'
+		$url = '/auth_test/add';
+		$result = $this->__testStartupConfig($url, array(
+			'deny' => array(
+				'add' => array('something')
+			),
+			'allow' => array(
+				'add' => array('singer')  
+			)
+		));
+		$this->assertTrue($result); 
+		
+		// deny 'singer', but allow 'something'
+		$url = '/auth_test/add';
+		$result = $this->__testStartupConfig($url, array(
+			'deny' => array(
+				'add' => array('singer')  
+			),
+			'allow' => array(
+				'add' => array('something')  
+			)
+		));
+		$this->assertFalse($result);
+	}
 	
 	
-	
-	
-	
-	
+	function testMatch_RuleOne_xOne() {
+		$this->__login();
+		
+		// check if authed user has 'singer' role in DB
+		$testUser = new TestUser();
+		$testUser->id = $this->Controller->TestAuth->user('id');
+		$roles = $testUser->roles(true);
+		$this->assertTrue(in_array('singer', $roles));
+		
+		// allow 'singer', but deny 'something'
+		$url = '/auth_test/add';
+		$result = $this->__testStartupConfig($url, array(
+			'deny' => array(
+				'add' => array('singer')
+			),
+			'allow' => array(
+				'add' => array('*')  
+			)
+		));
+		$this->assertFalse($result); 
+		
+		// deny 'everything', but allow 'singer'
+		$url = '/auth_test/add';
+		$result = $this->__testStartupConfig($url, array(
+			'deny' => array(
+				'add' => array('*')  
+			),
+			'allow' => array(
+				'add' => array('singer')  
+			)
+		));
+		$this->assertTrue($result);
+		
+		
+		// deny 'idontexist', allow 'idontexist'
+		$url = '/auth_test/add';
+		$result = $this->__testStartupConfig($url, array(
+			'deny' => array(
+				'add' => array('idontexist') // false
+			),
+			'allow' => array(
+				'add' => array('idontexist') // false
+			)
+		));
+		$this->assertFalse($result);
+	}
 }
-
-
 ?>
