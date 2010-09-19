@@ -28,6 +28,9 @@ class Inmate extends JailsonAppModel {
 	 * @return	array	List of saved keys
 	 */
 	public function store($keys) {
+		if (empty($keys)) return array();
+		if (!is_array($keys)) $keys = array($keys);
+		
 		$existing = $this->retrieve($keys);
 		$newKeys = array_diff($keys, $existing);
 		
@@ -49,6 +52,7 @@ class Inmate extends JailsonAppModel {
 	 * @return	array	List of found keys
 	 */
 	public function retrieve($keys) {
+		if (empty($keys)) return array();
 		$result = (array) $this->find('all', array(
 			'fields' => array("{$this->alias}.key"),
 			'conditions' => array("{$this->alias}.key" => $keys),	
@@ -60,12 +64,13 @@ class Inmate extends JailsonAppModel {
 	/**
 	 * Search Database for a partial key using LIKE, returning all results
 	 * 
-	 * @param 	string	$partialKey	The key snippet
-	 * @return	mixed	List of found keys
+	 * @param 	string 	$partialKey The beginning of a key
+	 * @return	array	List of found keys
 	 */
 	public function drilldown($partialKey) {
-		$result = $this->find('all', array(
-			'conditions' => array('key LIKE' => $partialKey . '%'),	
+		if (empty($partialKey)) return array();
+		$result = (array) $this->find('all', array(
+			'conditions' => array("{$this->alias}.key LIKE" => $partialKey . '%'),	
 			'recursive' => -1
 		));
 		return Set::extract("/{$this->alias}/key", $result);
@@ -78,11 +83,18 @@ class Inmate extends JailsonAppModel {
 	 * @return 	array 	List of deleted keys
 	 */
 	public function remove($keys) {
-		$result = $this->find('first', array(
+		if (empty($keys)) return array();
+		if (!is_array($keys)) $keys = array($keys);
+		
+		$result = $this->find('all', array(
 			'conditions' => array("{$this->alias}.key" => $keys),	
 			'recursive' => -1
 		));
-		$records = array('id' => Set::extract("/{$this->alias}/id", $result));
+		if (!$result) return array();
+		
+		$records = array(
+			'id' => Set::extract("/{$this->alias}/id", $result)
+		);
 		$this->deleteAll($records, false);
 		return Set::extract("/{$this->alias}/key", $result);
 	}
@@ -97,15 +109,20 @@ class Inmate extends JailsonAppModel {
 	 * 
 	 * partialKey 'User/12/foo' removes also /Bar and /Bar/Baz
 	 * 
-	 * @param 	mixed 	$keys 	array or string
+	 * @param 	string 	$partialKey The beginning of a key
 	 * @return 	array 	List of deleted keys
 	 */
 	public function removeTree($partialKey) {
-		$result = $this->find('all', array(
-			'conditions' => array('key LIKE' => $partialKey . '%'),	
+		if (empty($partialKey)) return array();
+		$result = (array) $this->find('all', array(
+			'conditions' => array("{$this->alias}.key LIKE" => $partialKey . '%'),	
 			'recursive' => -1
 		));
-		$records = array('id' => Set::extract("/{$this->alias}/id", $result));
+		if (!$result) return array();
+		
+		$records = array(
+			'id' => Set::extract("/{$this->alias}/id", $result)
+		);
 		$this->deleteAll($records, false);
 		return Set::extract("/{$this->alias}/key", $result);
 	}
