@@ -169,7 +169,7 @@ class AclAuthComponent extends Object {
 			if (is_array($rule) && !is_numeric($role)) {					
 				$arguments = array_merge(array($role), $rule);
 			} elseif (is_string($rule) && !is_numeric($role)) {					
-				$arguments = array_merge(array($role), array($rule));
+				$arguments = array($role, $rule);
 			} else {
 				$arguments = array($rule);
 			}
