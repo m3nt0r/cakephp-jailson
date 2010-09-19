@@ -301,8 +301,8 @@ class AclAuthTest extends CakeTestCase {
 		$this->assertFalse($this->Controller->TestAuth->isAuthorized());
 	}
 	
-	function testLogin() {
-		
+	
+	function __login() {
 		$this->TestUser = new TestUser();
 		$authUser = $this->TestUser->read(null, 1); // get John
 		
@@ -317,10 +317,27 @@ class AclAuthTest extends CakeTestCase {
 		
 		// test valid login 
 		$result = $this->Controller->TestAuth->login($this->Controller->data);
-		$this->assertTrue($result); // logged in
+		$this->assertTrue($result); 
+	}
+	
+	/**
+	* requires __login();
+	*/
+	function __testStartupConfig($url, $config = array()) {
+		$this->Controller->params = Router::parse($url);
+		$this->Controller->params['url']['url'] = Router::normalize($url);
+		$this->Controller->TestAuth->initialize($this->Controller);
+		$this->Controller->TestAclAuth->initialize($this->Controller, $config);
+		return $this->Controller->TestAuth->startup($this->Controller);
+	}
+	
+	
+	function testLogin() {
+		// test valid login 
+		$this->__login();
 		
 		// test session content
-		$user = $this->Controller->TestAuth->user();
+		$result = $this->Controller->TestAuth->user();
 		$expected = array(
 			'TestUser' => array(
 				'id' => 1,
@@ -328,8 +345,37 @@ class AclAuthTest extends CakeTestCase {
 			)
 		);
 		$this->assertEqual($result, $expected);
-		
 	}
+	
+	function testDenyAll() {
+		$this->__login();
+		
+		$url = '/auth_test/delete';
+		$result = $this->__testStartupConfig($url, array(
+			'deny' => array('*')
+		));
+		$this->assertFalse($result);
+	}
+	
+	function testAllowAll() {
+		$this->__login();
+		
+		$url = '/auth_test/delete';
+		$result = $this->__testStartupConfig($url, array(
+			'allow' => array('*')
+		));
+		$this->assertTrue($result);
+	} 
+	
+	function testEmpty() {
+		$this->__login();
+		
+		$url = '/auth_test/delete';
+		$result = $this->__testStartupConfig($url);
+		$this->assertTrue($result);
+	}
+	
+	
 }
 
 
