@@ -79,10 +79,10 @@ class UserTestCase extends CakeTestCase {
 		// add user to group
 		$result = $this->User->lockAs('beatle');
 		$expected = array(
-          	array(
+			array(
 				'inmate' => 'TestUser',
-	            'inmate_id' => '1',
-	            'role' => 'beatle'
+				'inmate_id' => '1',
+				'role' => 'beatle'
 			)
 		);
 		$this->assertEqual($result, $expected);
@@ -103,10 +103,10 @@ class UserTestCase extends CakeTestCase {
 		// add user to object
 		$result = $this->User->lockAs('member', $this->Project);
 		$expected = array(
-          	array(
+			array(
 				'inmate' => 'TestUser',
-	            'inmate_id' => '1',
-	            'role' => 'member',
+				'inmate_id' => '1',
+				'role' => 'member',
 				'subject' => 'TestProject',
 				'subject_id' => '1'
 			)
@@ -123,16 +123,16 @@ class UserTestCase extends CakeTestCase {
 		// add multiple roles to object
 		$result = $this->User->lockAs(array('musician', 'artist'), $this->Project);
 		$expected = array(
-          	array(
+			array(
 				'inmate' => 'TestUser',
-	            'inmate_id' => '1',
-	            'role' => 'musician',
+				'inmate_id' => '1',
+				'role' => 'musician',
 				'subject' => 'TestProject',
 				'subject_id' => '1'
 			),array(
 				'inmate' => 'TestUser',
-	            'inmate_id' => '1',
-	            'role' => 'artist',
+				'inmate_id' => '1',
+				'role' => 'artist',
 				'subject' => 'TestProject',
 				'subject_id' => '1'
 			)
@@ -143,10 +143,10 @@ class UserTestCase extends CakeTestCase {
 		$this->Project->id = null;
 		$result = $this->User->lockAs('member', $this->Project);
 		$expected = array(
-          	array(
+			array(
 				'inmate' => 'TestUser',
-	            'inmate_id' => '1',
-	            'role' => 'member',
+				'inmate_id' => '1',
+				'role' => 'member',
 				'subject' => 'TestProject'
 			)
 		);
@@ -165,10 +165,10 @@ class UserTestCase extends CakeTestCase {
 		// add user to group
 		$result = $this->User->lockAs('awesome', 'hacker');
 		$expected = array(
-          	array(
+			array(
 				'inmate' => 'TestUser',
-	            'inmate_id' => '1',
-	            'role' => 'awesome',
+				'inmate_id' => '1',
+				'role' => 'awesome',
 				'subject' => 'hacker'
 			)
 		);
@@ -183,10 +183,10 @@ class UserTestCase extends CakeTestCase {
 		// the _in suffix
 		$result = $this->User->lockAs('awesome_in', 'hacking');
 		$expected = array(
-          	array(
+			array(
 				'inmate' => 'TestUser',
-	            'inmate_id' => '1',
-	            'role' => 'awesome',
+				'inmate_id' => '1',
+				'role' => 'awesome',
 				'subject' => 'hacking'
 			)
 		);
@@ -195,10 +195,10 @@ class UserTestCase extends CakeTestCase {
 		// weird _by syntax ftw
 		$result = $this->User->lockAs('A_w-e^s+_me_by', 'design');
 		$expected = array(
-          	array(
+			array(
 				'inmate' => 'TestUser',
-	            'inmate_id' => '1',
-	            'role' => 'A_w-e^s+_me',
+				'inmate_id' => '1',
+				'role' => 'A_w-e^s+_me',
 				'subject' => 'design'
 			)
 		);
@@ -218,34 +218,34 @@ class UserTestCase extends CakeTestCase {
 		
 		// huge array incoming... run!!
 		$expected = array(
-          	array(
+			array(
 				'inmate' => 'TestUser',
-	            'inmate_id' => '1',
-	            'role' => 'master'
+				'inmate_id' => '1',
+				'role' => 'master'
 			),array(
 				'inmate' => 'TestUser',
-	            'inmate_id' => '1',
-	            'role' => 'toocool'
+				'inmate_id' => '1',
+				'role' => 'toocool'
 			),array(
 				'inmate' => 'TestUser',
-	            'inmate_id' => '1',
-	            'role' => 'gettin'
+				'inmate_id' => '1',
+				'role' => 'gettin'
 			),array(
 				'inmate' => 'TestUser',
-	            'inmate_id' => '1',
-	            'role' => 'passing'
+				'inmate_id' => '1',
+				'role' => 'passing'
 			),array(
 				'inmate' => 'TestUser',
-	            'inmate_id' => '1',
-	            'role' => 'rocking'
+				'inmate_id' => '1',
+				'role' => 'rocking'
 			),array(
 				'inmate' => 'TestUser',
-	            'inmate_id' => '1',
-	            'role' => 'winning'
+				'inmate_id' => '1',
+				'role' => 'winning'
 			),array(
 				'inmate' => 'TestUser',
-	            'inmate_id' => '1',
-	            'role' => 'jailson_rawks'
+				'inmate_id' => '1',
+				'role' => 'jailson_rawks'
 			)
 		);
 		
