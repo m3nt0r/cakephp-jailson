@@ -31,11 +31,6 @@ class AclAuthComponent extends Object {
 	protected $_Controller;
 	
 	/**
-	 * Inmate Model reference
-	 */
-	protected $_User;
-	
-	/**
 	 * Deny rules
 	 */
 	public $deny = array();
@@ -78,8 +73,6 @@ class AclAuthComponent extends Object {
 			$this->_Auth =& $controller->{$this->authClass};
 			$this->_Auth->authorize = 'object';
 			$this->_Auth->object = $this;
-			// Import user model
-			$this->_User = $this->_Auth->getModel();
 		} else {
 			trigger_error(__("Could not find {$this->authClass}Component. Please include {$this->authClass} in Controller::\$components.", true), E_USER_WARNING);
 		}
@@ -96,7 +89,7 @@ class AclAuthComponent extends Object {
 	 */
 	public function isAuthorized($user, $controller, $action) {
 		
-		$userModel = $this->_User;
+		$userModel = $this->_Auth->getModel();
 		$userModel->id = $user[$this->_Auth->userModel]['id'];
 		
 		$currentPath = $controller .'/'. $action;
@@ -151,7 +144,7 @@ class AclAuthComponent extends Object {
 	protected function _dispatch($userModel, $method, $required) {
 		$result = false;
 		
-		if (array_key_exists('Jailson.Inmate', $userModel->actsAs)) {
+		if (!is_array($userModel->actsAs) || (!array_key_exists('Jailson.Inmate', $userModel->actsAs) && !in_array('Jailson.Inmate', $userModel->actsAs))) {
 			trigger_error(__("Looks like your userModel is missing the behavior. Please include 'Jailson.Inmate' in {$userModel->name}::\$actsAs.", true), E_USER_WARNING);
 		}
 		
