@@ -347,26 +347,7 @@ class AclAuthTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 	
-	function testDenyAll() {
-		$this->__login();
-		
-		$url = '/auth_test/delete';
-		$result = $this->__testStartupConfig($url, array(
-			'deny' => array('*')
-		));
-		$this->assertFalse($result);
-	}
-	
-	function testAllowAll() {
-		$this->__login();
-		
-		$url = '/auth_test/delete';
-		$result = $this->__testStartupConfig($url, array(
-			'allow' => array('*')
-		));
-		$this->assertTrue($result);
-	} 
-	
+	// Behavior: User can access the page since no special permission are in place
 	function testEmpty() {
 		$this->__login();
 		
@@ -375,6 +356,67 @@ class AclAuthTest extends CakeTestCase {
 		$this->assertTrue($result);
 	}
 	
+	// Behavior: User is denied from accessing the page.
+	function testDenyAll() {
+		$this->__login();
+		
+		$url = '/auth_test/delete';
+		$result = $this->__testStartupConfig($url, array(
+			'deny' => array('*')
+		));
+		$this->assertFalse($result);
+		
+		$url = '/auth_test/add';
+		$result = $this->__testStartupConfig($url, array(
+			'deny' => array('*')
+		));
+		$this->assertFalse($result);
+	}
+	
+	// Behavior: User can access the page as everybody is allowed
+	function testAllowAll() {
+		$this->__login();
+		
+		$url = '/auth_test/delete';
+		$result = $this->__testStartupConfig($url, array(
+			'allow' => array('*')
+		));
+		$this->assertTrue($result);
+		
+		$url = '/auth_test/add';
+		$result = $this->__testStartupConfig($url, array(
+			'allow' => array('*')
+		));
+		$this->assertTrue($result);
+	} 
+	
+	// Behavior: User needs to be in a group to access the page
+	function testAllowForGroup() {
+		$this->__login();
+		
+		$url = '/auth_test/add';
+		$result = $this->__testStartupConfig($url, array(
+			'allow' => array(
+				'add' => array('member')  // implies a "deny-everybody else"
+			)
+		));
+		$this->assertFalse($result); 
+		// false - not in the group
+	}
+	
+	// Behavior: User needs to be in a group to access the page
+	function testDenyForGroup() {
+		$this->__login();
+		
+		$url = '/auth_test/delete';
+		$result = $this->__testStartupConfig($url, array(
+			'deny' => array(
+				'delete' => array('member') // only deny access to this group
+			)
+		));
+		$this->assertTrue($result); 
+		// true - not in the group
+	}
 	
 }
 
