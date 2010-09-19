@@ -960,7 +960,45 @@ class UserTestCase extends CakeTestCase {
 			),
 		);		
 		$this->assertEqual($result, $expected);
+	}
+	
+	# =================================================
+	# Inmate::afterDelete()
+	# =================================================
+
+	public function testAfterDelete() {
 		
+		$this->User->id = 1;
+		
+		// we have 2 permissions in database
+		$result = $this->User->roles();
+		$expected = array(
+			'singer' => array(
+				array(
+					'inmate' => 'TestUser',
+					'inmate_id' => '1',
+					'role' => 'singer',
+				),array(
+					'inmate' => 'TestUser',
+					'inmate_id' => '1',
+					'role' => 'singer',
+					'subject' => 'pianist',
+				)
+			)
+		);
+		$this->assertEqual($result, $expected);
+		
+		// the user is deleted
+		$this->User->delete(1);
+		
+		// query db for any data related to user-id
+		$inmate = new TestInmate();
+		$result = $inmate->drilldown('TestUser/1');
+		$expected = array(
+		);
+		
+		// not found = good
+		$this->assertEqual($result, $expected);
 	}
 	
 }
