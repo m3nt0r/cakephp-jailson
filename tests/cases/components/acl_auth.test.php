@@ -206,6 +206,16 @@ class AuthTestController extends Controller {
 	}
 
 /**
+ * edit method
+ *
+ * @access public
+ * @return void
+ */
+	function edit() {
+		echo "edit";
+	}
+	
+/**
  * add method
  *
  * @access public
@@ -635,7 +645,17 @@ class AclAuthTest extends CakeTestCase {
 			)
 		));
 		$this->assertTrue($result);
+	}
+	
+	
+	function testMatch_DoubleFalse() {
+		$this->__login();
 		
+		// check if authed user has 'singer' role in DB
+		$testUser = new TestUser();
+		$testUser->id = $this->Controller->TestAuth->user('id');
+		$roles = $testUser->roles(true);
+		$this->assertTrue(in_array('singer', $roles));
 		
 		// deny 'idontexist', allow 'idontexist'
 		$url = '/auth_test/add';
@@ -649,5 +669,106 @@ class AclAuthTest extends CakeTestCase {
 		));
 		$this->assertFalse($result);
 	}
+	
+	# =================================================
+	# Testing more complex rules
+	# =================================================
+	
+	function testMatch_MultipleActions() {
+		$this->__login();
+		
+		// check if authed user has 'singer' role in DB
+		$testUser = new TestUser();
+		$testUser->id = $this->Controller->TestAuth->user('id');
+		$roles = $testUser->roles(true);
+		$this->assertTrue(in_array('singer', $roles));
+		
+		// deny some actions to members. 
+		// since im not a member, should be true
+		$url = '/auth_test/add';
+		$result = $this->__testStartupConfig($url, array(
+			'deny' => array(
+				'add' => array('member'), // false
+				'edit' => array('member'), // false
+				'delete' => array('member'), // false
+			)
+		));
+		$this->assertTrue($result);
+		
+		// different action
+		$url = '/auth_test/edit';
+		$result = $this->__testStartupConfig($url, array(
+			'deny' => array(
+				'add' => array('member'), // false
+				'edit' => array('member'), // false
+				'delete' => array('member'), // false
+			)
+		));
+		$this->assertTrue($result);
+		
+		// allow some actions to members. 
+		// since im not a member, should be false
+		$url = '/auth_test/delete';
+		$result = $this->__testStartupConfig($url, array(
+			'allow' => array(
+				'add' => array('member'), // false
+				'edit' => array('member'), // false
+				'delete' => array('member'), // false
+			)
+		));
+		$this->assertFalse($result);
+		
+		
+		$url = '/auth_test/delete';
+		$result = $this->__testStartupConfig($url, array(
+			'deny' => array(
+				'add' => array('member'), // false
+				'edit' => array('member'), // false
+				'delete' => array('member'), // false
+			),
+			'allow' => array(
+				'add' => array('member'), // false
+				'edit' => array('member'), // false
+				'delete' => array('member'), // false
+			)
+			// makes no sense, but that shouldn't hurt the processing.
+		));
+		$this->assertFalse($result);
+		
+		
+		$url = '/auth_test/delete';
+		$result = $this->__testStartupConfig($url, array(
+			'deny' => array(
+				'add' => array('member'), // false
+				'edit' => array('member'), // false
+				'delete' => array('member'), // false
+			),
+			'allow' => array(
+				'add' => array('member'), // false
+				'edit' => array('singer' => 'pianist'), // true
+				'delete' => array('singer'), // true
+			)
+		));
+		$this->assertTrue($result);
+		
+		// bunch of deny, allows. using "allow edit" for test
+		$url = '/auth_test/edit';
+		$result = $this->__testStartupConfig($url, array(
+			'deny' => array(
+				'add' => array('member'), // false
+				'edit' => array('member'), // false
+				'delete' => array('member'), // false
+			),
+			'allow' => array(
+				'add' => array('member'), // false
+				'edit' => array('singer' => 'pianist'), // true
+				'delete' => array('singer'), // true
+			)
+		));
+		$this->assertTrue($result);
+		
+	}
+	
+	
 }
 ?>
