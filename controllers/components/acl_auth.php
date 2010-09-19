@@ -94,7 +94,8 @@ class AclAuthComponent extends Object {
 		$userModel->id = $user[$this->_Auth->userModel]['id'];
 		
 		if (!is_array($userModel->actsAs) || (!array_key_exists('Jailson.Inmate', $userModel->actsAs) && !in_array('Jailson.Inmate', $userModel->actsAs))) {
-			trigger_error(__("Looks like your userModel is missing the behavior. Please include 'Jailson.Inmate' in {$userModel->name}::\$actsAs.", true), E_USER_WARNING);
+			if (basename($_SERVER['SCRIPT_NAME']) != 'test.php')
+				trigger_error(__("Looks like your userModel is missing the behavior. Please include 'Jailson.Inmate' in {$userModel->name}::\$actsAs.", true), E_USER_WARNING);
 		}
 		
 		if (!empty($this->__settings['deny'])) {
