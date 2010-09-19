@@ -6,7 +6,7 @@
  * @category CakePHP
  * @author Kjell Bublitz <m3nt0r.de@gmail.com>
  * @package plugins.jailson
- * @subpackage plugins.jailson.models
+ * @subpackage plugins.jailson.tests.case
  * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  * @link http://github.com/m3nt0r/cakephp-jailson Repository/Docs
  */
@@ -163,13 +163,13 @@ class UserTestCase extends CakeTestCase {
 		$this->User->id = 1;
 		
 		// add user to group
-		$result = $this->User->lockAs('awesome', 'hacker');
+		$result = $this->User->lockAs('ninja_at', 'cakephp');
 		$expected = array(
 			array(
 				'inmate' => 'TestUser',
 				'inmate_id' => '1',
-				'role' => 'awesome',
-				'subject' => 'hacker'
+				'role' => 'ninja',
+				'subject' => 'cakephp'
 			)
 		);
 		$this->assertEqual($result, $expected);
@@ -181,13 +181,13 @@ class UserTestCase extends CakeTestCase {
 		$this->User->id = 1;
 		
 		// the _in suffix
-		$result = $this->User->lockAs('awesome_in', 'hacking');
+		$result = $this->User->lockAs('cakephp', 'coder');
 		$expected = array(
 			array(
 				'inmate' => 'TestUser',
 				'inmate_id' => '1',
-				'role' => 'awesome',
-				'subject' => 'hacking'
+				'role' => 'cakephp',
+				'subject' => 'coder'
 			)
 		);
 		$this->assertEqual($result, $expected);
