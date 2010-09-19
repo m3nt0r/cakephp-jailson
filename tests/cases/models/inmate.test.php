@@ -13,14 +13,16 @@
 
 App::import('Model','Jailson.Inmate'); 
 
-class TestInmate extends Inmate {
-	public $useTable = 'test_inmates';
-	public $useDbConfig = "test_suite";
-	public $cacheSources = false;
-	public $hasAndBelongsToMany = array();
-	public $belongsTo = array();
-	public $hasOne = array();
-	public $hasMany = array();
+if (!class_exists('TestInmate')) {
+	class TestInmate extends Inmate {
+		public $useTable = 'test_inmates';
+		public $useDbConfig = "test_suite";
+		public $cacheSources = false;
+		public $hasAndBelongsToMany = array();
+		public $belongsTo = array();
+		public $hasOne = array();
+		public $hasMany = array();
+	}
 }
 
 class InmateTestCase extends CakeTestCase { 

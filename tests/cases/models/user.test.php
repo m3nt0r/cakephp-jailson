@@ -14,40 +14,46 @@
 App::import('Model','Jailson.Inmate');  
 App::import('Behavior','Jailson.Inmate');  
 
-class TestInmate extends Inmate {
-	public $useTable = 'test_inmates';
-	public $useDbConfig = "test_suite";
-	public $cacheSources = false;
-	public $hasAndBelongsToMany = array();
-	public $belongsTo = array();
-	public $hasOne = array();
-	public $hasMany = array();
+if (!class_exists('TestInmate')) {
+	class TestInmate extends Inmate {
+		public $useTable = 'test_inmates';
+		public $useDbConfig = "test_suite";
+		public $cacheSources = false;
+		public $hasAndBelongsToMany = array();
+		public $belongsTo = array();
+		public $hasOne = array();
+		public $hasMany = array();
+	}
 }
 
-class TestUser extends AppModel {
-	public $useTable = 'test_users';
-	public $useDbConfig = "test_suite";
-	public $cacheSources = false;
-	public $actsAs = array(
-		'Jailson.Inmate' => array(
-			'inmateModel' => 'TestInmate',
-			'disableCache' => true
-		)
-	);
-	public $hasAndBelongsToMany = array();
-	public $belongsTo = array();
-	public $hasOne = array();
-	public $hasMany = array();
+if (!class_exists('TestUser')) {
+	class TestUser extends AppModel {
+		public $useTable = 'test_users';
+		public $useDbConfig = "test_suite";
+		public $cacheSources = false;
+		public $actsAs = array(
+			'Jailson.Inmate' => array(
+				'inmateModel' => 'TestInmate',
+				'disableCache' => true
+			)
+		);
+		public $hasAndBelongsToMany = array();
+		public $belongsTo = array();
+		public $hasOne = array();
+		public $hasMany = array();
+	}
 }
 
-class TestProject extends AppModel {
-	public $useTable = 'test_projects';
-	public $useDbConfig = "test_suite";
-	public $cacheSources = false;
-	public $hasAndBelongsToMany = array();
-	public $belongsTo = array();
-	public $hasOne = array();
-	public $hasMany = array();
+if (!class_exists('TestProject')) {
+	class TestProject extends AppModel {
+		public $useTable = 'test_projects';
+		public $useDbConfig = "test_suite";
+		public $cacheSources = false;
+		public $hasAndBelongsToMany = array();
+		public $belongsTo = array();
+		public $hasOne = array();
+		public $hasMany = array();
+	}
 }
 
 class UserTestCase extends CakeTestCase { 

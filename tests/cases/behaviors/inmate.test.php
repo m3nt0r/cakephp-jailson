@@ -23,26 +23,30 @@ class TestInmateBehavior extends InmateBehavior {
 	}
 }
 
-class TestInmate extends Inmate {
-	public $useTable = 'test_inmates';
-	public $useDbConfig = "test_suite";
-	public $cacheSources = false;
-	public $hasAndBelongsToMany = array();
-	public $belongsTo = array();
-	public $hasOne = array();
-	public $hasMany = array();
+if (!class_exists('TestInmate')) {
+	class TestInmate extends Inmate {
+		public $useTable = 'test_inmates';
+		public $useDbConfig = "test_suite";
+		public $cacheSources = false;
+		public $hasAndBelongsToMany = array();
+		public $belongsTo = array();
+		public $hasOne = array();
+		public $hasMany = array();
+	}
 }
 
-class TestUser extends AppModel {
-	public $useTable = 'test_users';
-	public $useDbConfig = "test_suite";
-	public $cacheSources = false;
-	public $actsAs = array(
-		'TestInmate' => array(
-			'inmateModel' => 'TestInmate',
-			'disableCache' => true
-		)
-	);
+if (!class_exists('TestUser')) {
+	class TestUser extends AppModel {
+		public $useTable = 'test_users';
+		public $useDbConfig = "test_suite";
+		public $cacheSources = false;
+		public $actsAs = array(
+			'TestInmate' => array(
+				'inmateModel' => 'TestInmate',
+				'disableCache' => true
+			)
+		);
+	}
 }
 
 class TestObject extends AppModel {
