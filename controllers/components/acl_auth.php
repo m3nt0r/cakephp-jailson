@@ -144,6 +144,7 @@ class AclAuthComponent extends Object {
 	 */
 	protected function _dispatch($userModel, $method, $required) {
 		$result = false;
+		$results = array();		
 		
 		if (!is_array($userModel->actsAs) || (!array_key_exists('Jailson.Inmate', $userModel->actsAs) && !in_array('Jailson.Inmate', $userModel->actsAs))) {
 			trigger_error(__("Looks like your userModel is missing the behavior. Please include 'Jailson.Inmate' in {$userModel->name}::\$actsAs.", true), E_USER_WARNING);
@@ -156,12 +157,18 @@ class AclAuthComponent extends Object {
 				$arguments = array($rule);
 			}
 			
-			$result = call_user_func_array(array($userModel, $method), $arguments);
-			
-			if ($result) {
-				break; // stop on first match
-			}
+			$results[] = call_user_func_array(array($userModel, $method), $arguments);
 		}
+		
+		if ($method == 'is') {
+			$result = in_array(true, $results, $strict=true);
+		}
+		
+		if ($method == 'isNot') {
+			// if there's any false, the result becomes true again
+			$result = !in_array(false, $results, $strict=true);
+		}
+		
 		return (bool) $result;
 	}
 	
