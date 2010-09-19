@@ -44,25 +44,22 @@ class InmateBehavior extends ModelBehavior {
 	public $Inmate;
 	
 	/**
-	 * Name of the storage model for loading
-	 * @var string
-	 */
-	public $inmateModel = 'Jailson.Inmate';
-	
-	/**
 	 * Init Storage Model
 	 */
 	function setup($model, $config = array()) {
-		if (!is_object($this->Inmate)) {
-			$this->Inmate = ClassRegistry::init($this->inmateModel);
-		}
 		
 		// options
 		$_defaultConfig = array(
-			'cacheConfig' => 'default'
+			'cacheConfig' => 'default',
+			'inmateModel' => 'Jailson.Inmate',
+			'disableCache' => false
 		);
+		$this->settings[$model->alias] = array_merge($_defaultConfig, $config);	
 		
-		$this->settings[$model->alias] = array_merge($_defaultConfig, $config);		
+		// load storage model
+		if (!is_object($this->Inmate)) {
+			$this->Inmate = ClassRegistry::init($this->settings[$model->alias]['inmateModel']);
+		}
 	}
 
 	/**
@@ -340,6 +337,9 @@ class InmateBehavior extends ModelBehavior {
 	 * @return 	mixed
 	 */
 	function cachedRoles($model) {
+		if ($this->settings[$model->alias]['disableCache'])
+			return array();
+		
 		$config = $this->settings[$model->alias]['cacheConfig'];
 		$cache = Cache::read($this->_inmateId($model), $config);
 		return $cache;	
@@ -357,6 +357,7 @@ class InmateBehavior extends ModelBehavior {
 	 * @return	array	Data that was written 
 	 */
 	protected function _cache($task, $model, $data = array(), $cached = null) {
+		
 		if (!$cached) 
 			$cached = $this->cachedRoles($model);
 			
@@ -368,6 +369,9 @@ class InmateBehavior extends ModelBehavior {
 		
 		if ($task == 'reset')
 			$data = array();
+		
+		if ($this->settings[$model->alias]['disableCache'])
+			return $data;
 			
 		$key = $this->_inmateId($model);
 		Cache::write($key, Set::filter($data), $this->settings[$model->alias]['cacheConfig']);
