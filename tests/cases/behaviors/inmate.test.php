@@ -9,6 +9,7 @@
  * @subpackage plugins.jailson.tests.case
  * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  * @link http://github.com/m3nt0r/cakephp-jailson Repository/Docs
+ * @copyright (c) 2010, Kjell Bublitz (http://cakealot.com)
  */
 
 App::import('Model','Jailson.Inmate');  

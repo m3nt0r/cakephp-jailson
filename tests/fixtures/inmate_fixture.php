@@ -9,6 +9,7 @@
  * @subpackage plugins.jailson.tests.fixtures
  * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  * @link http://github.com/m3nt0r/cakephp-jailson Repository/Docs
+ * @copyright (c) 2010, Kjell Bublitz (http://cakealot.com)
  */
 class InmateFixture extends CakeTestFixture { 
 	public $name = 'Inmate'; 
