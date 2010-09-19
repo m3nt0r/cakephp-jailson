@@ -423,6 +423,7 @@ class UserTestCase extends CakeTestCase {
 		$this->User->id = 1;
 		$this->Project->id = 1;
 		
+		// add as member to project
 		$result = $this->User->lockAs('member', $this->Project);
 		$expected = array(
 			array(
@@ -443,6 +444,7 @@ class UserTestCase extends CakeTestCase {
 		$result = $this->User->is('singer', $this->Project);
 		$this->assertFalse($result);
 		
+		// add as singer to project
 		$result = $this->User->is('singer', $this->Project, true);
 		$expected = array(
 			array(
@@ -455,8 +457,12 @@ class UserTestCase extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 		
+		// test multiple
 		$result = $this->User->is(array('member', 'singer'), $this->Project);
 		$this->assertTrue($result);
 	}
+	
+	
+	
 }
 ?>
