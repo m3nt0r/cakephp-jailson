@@ -128,7 +128,7 @@ class AclAuthComponent extends Object {
 				$permissions['deny'] = true;
 				$denyAll = true;
 			} else {
-				$permissions['deny'] = $this->_assert($userModel, $required, true);
+				$permissions['deny'] = $this->_assert($userModel, $required);
 			}
 		}
 		
@@ -139,7 +139,7 @@ class AclAuthComponent extends Object {
 				$permissions['allow'] = true;
 				$allowAll = true;
 			} else {
-				$permissions['allow'] = $this->_assert($userModel, $required, true);
+				$permissions['allow'] = $this->_assert($userModel, $required);
 			}
 		}
 
@@ -162,7 +162,7 @@ class AclAuthComponent extends Object {
 		return true;
 	}
 	
-	protected function _assert($userModel, $required, $test = false) {
+	protected function _assert($userModel, $required) {
 		
 		$results = array();	
 		foreach ($required as $role => $rule) {
@@ -176,7 +176,7 @@ class AclAuthComponent extends Object {
 			$results[] = call_user_func_array(array($userModel, 'is'), $arguments);
 		}
 		
-		return in_array($test, $results, $strict=true);
+		return in_array(true, $results, $strict=true);
 	}
 	
 	/**
