@@ -356,5 +356,107 @@ class UserTestCase extends CakeTestCase {
 	}
 	
 	
+	# =================================================
+	# Inmate::is()
+	# =================================================
+	
+	public function testIs() {
+		
+		$this->User->id = 1;
+		
+		// single
+		$result = $this->User->is('singer');
+		$this->assertTrue($result);
+		
+		// with subject
+		$result = $this->User->is('singer', 'pianist');
+		$this->assertTrue($result);
+		
+		// not found
+		$result = $this->User->is('anon');
+		$this->assertFalse($result);
+		
+		// create switch
+		$result = $this->User->is('anon', true);
+		$expected = array(
+			array(
+				'inmate' => 'TestUser',
+				'inmate_id' => '1',
+				'role' => 'anon',
+			)
+		);
+		$this->assertEqual($result, $expected);
+		
+		// was created, same query yields true now
+		$result = $this->User->is('anon');
+		$this->assertTrue($result);
+		
+		// test multiple
+		$result = $this->User->is(array('anon', 'singer'));
+		$this->assertTrue($result);
+		
+		// test multiple not found
+		$result = $this->User->is(array('not', 'found'));
+		$this->assertFalse($result);
+		
+		// create multiple with switch
+		$result = $this->User->is(array('not', 'found'), true);
+		$expected = array(
+			array(
+				'inmate' => 'TestUser',
+				'inmate_id' => '1',
+				'role' => 'not',
+			),array(
+				'inmate' => 'TestUser',
+				'inmate_id' => '1',
+				'role' => 'found',
+			)
+		);
+		$this->assertEqual($result, $expected);
+		
+		$result = $this->User->is(array('not', 'found'));
+		$this->assertTrue($result);
+	}
+	
+	public function testIsObject() {
+		
+		$this->User->id = 1;
+		$this->Project->id = 1;
+		
+		$result = $this->User->lockAs('member', $this->Project);
+		$expected = array(
+			array(
+				'inmate' => 'TestUser',
+				'inmate_id' => '1',
+				'role' => 'member',
+				'subject' => 'TestProject',
+				'subject_id' => '1'
+			)
+		);
+		$this->assertEqual($result, $expected);
+		
+		// single
+		$result = $this->User->is('member', $this->Project);
+		$this->assertTrue($result);
+		
+		// wrong role
+		$result = $this->User->is('singer', $this->Project);
+		$this->assertFalse($result);
+		
+		$result = $this->User->is('singer', $this->Project, true);
+		$expected = array(
+			array(
+				'inmate' => 'TestUser',
+				'inmate_id' => '1',
+				'role' => 'singer',
+				'subject' => 'TestProject',
+				'subject_id' => '1'
+			)
+		);
+		$this->assertEqual($result, $expected);
+		
+		$result = $this->User->is(array('member', 'singer'), $this->Project);
+		$this->assertTrue($result);
+	}
 }
 ?>
