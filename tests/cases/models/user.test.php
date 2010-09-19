@@ -418,7 +418,7 @@ class UserTestCase extends CakeTestCase {
 		$this->assertTrue($result);
 	}
 	
-	public function testIsObject() {
+	public function testObjectIs() {
 		
 		$this->User->id = 1;
 		$this->Project->id = 1;
@@ -462,7 +462,143 @@ class UserTestCase extends CakeTestCase {
 		$this->assertTrue($result);
 	}
 	
+	# =================================================
+	# Inmate::isNot()
+	# =================================================
 	
+	public function testIsNot() {
+		
+		$this->User->id = 1;
+		
+		
+		
+		// single
+		$result = $this->User->isNot('singer');
+		$this->assertFalse($result);
+		
+		// with subject
+		$result = $this->User->isNot('singer', 'pianist');
+		$this->assertFalse($result);
+		
+		// not found
+		$result = $this->User->isNot('anon');
+		$this->assertTrue($result);
+		
+		// delete switch
+		$result = $this->User->isNot('singer', true);
+		$expected = array(
+			array(
+				'inmate' => 'TestUser',
+				'inmate_id' => '1',
+				'role' => 'singer',
+			)
+		);
+		$this->assertEqual($result, $expected);
+		
+		// was deleted, same query yields true now
+		$result = $this->User->isNot('singer');
+		$this->assertTrue($result);
+		
+		// test multiple
+		$result = $this->User->isNot(array('anon', 'singer'));
+		$this->assertTrue($result);
+		
+		// test multiple not found
+		$result = $this->User->isNot(array('not', 'found'));
+		$this->assertTrue($result);
+		
+		// create multiple with switch
+		$result = $this->User->is(array('not', 'found'), true);
+		$expected = array(
+			array(
+				'inmate' => 'TestUser',
+				'inmate_id' => '1',
+				'role' => 'not',
+			),array(
+				'inmate' => 'TestUser',
+				'inmate_id' => '1',
+				'role' => 'found',
+			)
+		);
+		$this->assertEqual($result, $expected);
+		
+		// since we created them, isNot is now false
+		$result = $this->User->isNot(array('not', 'found'));
+		$this->assertFalse($result);
+		
+		// delete multiple through switch
+		$result = $this->User->isNot(array('not', 'found'), true);
+		
+		$expected = array(
+			array(
+				'inmate' => 'TestUser',
+				'inmate_id' => '1',
+				'role' => 'found',
+			),array(
+				'inmate' => 'TestUser',
+				'inmate_id' => '1',
+				'role' => 'not',
+			)
+		);
+		$this->assertEqual($result, $expected);
+		
+		// roles shouldn't match anymore.
+		$result = $this->User->isNot(array('not', 'found'));
+		$this->assertTrue($result);
+	}
 	
+	public function testObjectIsNot() {
+		
+		$this->User->id = 1;
+		$this->Project->id = 1;
+		
+		// add as member to project
+		$result = $this->User->lockAs(array('member_in', 'singer_of'), $this->Project);
+		$expected = array(
+			array(
+				'inmate' => 'TestUser',
+				'inmate_id' => '1',
+				'role' => 'member',
+				'subject' => 'TestProject',
+				'subject_id' => '1'
+			),array(
+				'inmate' => 'TestUser',
+				'inmate_id' => '1',
+				'role' => 'singer',
+				'subject' => 'TestProject',
+				'subject_id' => '1'
+			)
+		);
+		$this->assertEqual($result, $expected);
+		
+		// single
+		$result = $this->User->isNot('member_in', $this->Project);
+		$this->assertFalse($result);
+		
+		// wrong role
+		$result = $this->User->isNot('drummer_in', $this->Project);
+		$this->assertTrue($result);
+		
+		// delete member from project
+		$result = $this->User->isNot('member_in', $this->Project, true);
+		$expected = array(
+			array(
+				'inmate' => 'TestUser',
+				'inmate_id' => '1',
+				'role' => 'member',
+				'subject' => 'TestProject',
+				'subject_id' => '1'
+			)
+		);
+		$this->assertEqual($result, $expected);
+		
+		// test multiple (not in both)
+		$result = $this->User->isNot(array('member_in', 'singer_of'), $this->Project);
+		$this->assertTrue($result);
+		
+		// we removed from member
+		$result = $this->User->isNot(array('member_in'), $this->Project);
+		$this->assertTrue($result);
+	}
 }
 ?>

@@ -44,24 +44,24 @@ class InmateTestCase extends CakeTestCase {
 	public function testDrilldown() {
 	
 		// wide
-		$result = $this->Inmate->drilldown('Testuser');
+		$result = $this->Inmate->drilldown('TestUser');
 		$expected = array( 
-			'Testuser/1/singer', 
-			'Testuser/1/singer/pianist',
-			'Testuser/2/bass', 
-			'Testuser/2/bass/guitar',
-			'Testuser/3/lead',
-			'Testuser/3/lead/guitar',
-			'Testuser/4/drummer',
-			'Testuser/4/drummer/percussions',
+			'TestUser/1/singer', 
+			'TestUser/1/singer/pianist',
+			'TestUser/2/bass', 
+			'TestUser/2/bass/guitar',
+			'TestUser/3/lead',
+			'TestUser/3/lead/guitar',
+			'TestUser/4/drummer',
+			'TestUser/4/drummer/percussions',
 		);
 		$this->assertEqual($result, $expected);
 
 		// deep
-		$result = $this->Inmate->drilldown('Testuser/2/b');
+		$result = $this->Inmate->drilldown('TestUser/2/b');
 		$expected = array( 
-			'Testuser/2/bass',
-			'Testuser/2/bass/guitar'
+			'TestUser/2/bass',
+			'TestUser/2/bass/guitar'
 		);
 		$this->assertEqual($result, $expected);
 
@@ -85,16 +85,16 @@ class InmateTestCase extends CakeTestCase {
 	public function testRetrieve() {
 	
 		// string query
-		$result = $this->Inmate->retrieve('Testuser/1/singer');
+		$result = $this->Inmate->retrieve('TestUser/1/singer');
 		$expected = array( 
-			'Testuser/1/singer'
+			'TestUser/1/singer'
 		);
 		$this->assertEqual($result, $expected);
 
 		// array query
-		$result = $this->Inmate->retrieve(array('Testuser/1/singer'));
+		$result = $this->Inmate->retrieve(array('TestUser/1/singer'));
 		$expected = array( 
-			'Testuser/1/singer'
+			'TestUser/1/singer'
 		);
 		$this->assertEqual($result, $expected);
 
@@ -105,7 +105,7 @@ class InmateTestCase extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		// not found
-		$result = $this->Inmate->retrieve(array('Testuser/1/drummer'));
+		$result = $this->Inmate->retrieve(array('TestUser/1/drummer'));
 	    $expected = array( 
 		);
 		$this->assertEqual($result, $expected);
@@ -118,41 +118,41 @@ class InmateTestCase extends CakeTestCase {
 	public function testStore() {
 		
 		// store string
-		$result = $this->Inmate->store('Testuser/1/pianist');
+		$result = $this->Inmate->store('TestUser/1/pianist');
 		$expected = array( 
-			'Testuser/1/pianist'
+			'TestUser/1/pianist'
 		);
 		$this->assertEqual($result, $expected);
 
 		// remove string
-		$result = $this->Inmate->remove('Testuser/1/pianist');
+		$result = $this->Inmate->remove('TestUser/1/pianist');
 		$expected = array( 
-			'Testuser/1/pianist'
+			'TestUser/1/pianist'
 		);
 		$this->assertEqual($result, $expected);
 
 		// store array, multiple entries
 		$result = $this->Inmate->store(array(
-			'Testuser/1/testing',
-			'Testuser/1/makes',
-			'Testuser/1/perfect',
+			'TestUser/1/testing',
+			'TestUser/1/makes',
+			'TestUser/1/perfect',
 		));
 		$expected = array( 
-			'Testuser/1/testing',
-			'Testuser/1/makes',
-			'Testuser/1/perfect',
+			'TestUser/1/testing',
+			'TestUser/1/makes',
+			'TestUser/1/perfect',
 		);
 		$this->assertEqual($result, $expected);
 
 		// is in storage?
-		$result = $this->Inmate->retrieve('Testuser/1/perfect');
+		$result = $this->Inmate->retrieve('TestUser/1/perfect');
 		$expected = array( 
-			'Testuser/1/perfect'
+			'TestUser/1/perfect'
 		);
 		$this->assertEqual($result, $expected);
 
 		// store existing, shouldn't do anything
-		$result = $this->Inmate->store('Testuser/1/singer');
+		$result = $this->Inmate->store('TestUser/1/singer');
 		$expected = array( 
 		);
 		$this->assertEqual($result, $expected);
@@ -166,24 +166,24 @@ class InmateTestCase extends CakeTestCase {
 	public function testRemove() {
 		
 		// remove string
-		$result = $this->Inmate->remove('Testuser/1/singer');
+		$result = $this->Inmate->remove('TestUser/1/singer');
 		$expected = array( 
-			'Testuser/1/singer'
+			'TestUser/1/singer'
 		);
 		$this->assertEqual($result, $expected);
 		
 		// remove array
-		$result = $this->Inmate->remove(array('Testuser/3/lead', 'Testuser/4/drummer'));
+		$result = $this->Inmate->remove(array('TestUser/3/lead', 'TestUser/4/drummer'));
 		$expected = array(
-			'Testuser/3/lead', 
-			'Testuser/4/drummer'
+			'TestUser/3/lead', 
+			'TestUser/4/drummer'
 		);
 		$this->assertEqual($result, $expected);
 
 		// remove existing and non existing
-		$result = $this->Inmate->remove(array('Testuser/2/bass', 'idontexist'));
+		$result = $this->Inmate->remove(array('TestUser/2/bass', 'idontexist'));
 		$expected = array(
-			'Testuser/2/bass'
+			'TestUser/2/bass'
 		);
 		$this->assertEqual($result, $expected);
 	}
@@ -196,7 +196,7 @@ class InmateTestCase extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 		
 		// remove not found
-		$result = $this->Inmate->remove('Testuser/1/pianist');
+		$result = $this->Inmate->remove('TestUser/1/pianist');
 		$expected = array( 
 		);
 		$this->assertEqual($result, $expected);
@@ -209,27 +209,27 @@ class InmateTestCase extends CakeTestCase {
 	public function testRemoveTree() {
 		
 		// remove tree (2 level)
-		$result = $this->Inmate->removeTree('Testuser/1/singer');
+		$result = $this->Inmate->removeTree('TestUser/1/singer');
 		$expected = array( 
-			'Testuser/1/singer', 
-			'Testuser/1/singer/pianist',
+			'TestUser/1/singer', 
+			'TestUser/1/singer/pianist',
 		);
 		$this->assertEqual($result, $expected);
 
 		// remove string (3 level)
-		$result = $this->Inmate->removeTree('Testuser/2');
+		$result = $this->Inmate->removeTree('TestUser/2');
 		$expected = array( 
-			'Testuser/2/bass', 
-			'Testuser/2/bass/guitar',
+			'TestUser/2/bass', 
+			'TestUser/2/bass/guitar',
 		);
 		$this->assertEqual($result, $expected);
 
-		$result = $this->Inmate->removeTree('Testuser');
+		$result = $this->Inmate->removeTree('TestUser');
 		$expected = array( 
-			'Testuser/3/lead',
-			'Testuser/3/lead/guitar',
-			'Testuser/4/drummer',
-			'Testuser/4/drummer/percussions',
+			'TestUser/3/lead',
+			'TestUser/3/lead/guitar',
+			'TestUser/4/drummer',
+			'TestUser/4/drummer/percussions',
 		);
 		$this->assertEqual($result, $expected);
 

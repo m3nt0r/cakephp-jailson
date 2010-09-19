@@ -24,14 +24,14 @@ class InmateFixture extends CakeTestFixture {
 		)
 	); 
 	public $records = array( 
-		array ('id' => 1, 'key' => 'Testuser/1/singer'), 
-		array ('id' => 2, 'key' => 'Testuser/1/singer/pianist'),
-		array ('id' => 3, 'key' => 'Testuser/2/bass'), 
-		array ('id' => 4, 'key' => 'Testuser/2/bass/guitar'),
-		array ('id' => 5, 'key' => 'Testuser/3/lead'),
-		array ('id' => 6, 'key' => 'Testuser/3/lead/guitar'),
-		array ('id' => 7, 'key' => 'Testuser/4/drummer'),
-		array ('id' => 8, 'key' => 'Testuser/4/drummer/percussions'),
+		array ('id' => 1, 'key' => 'TestUser/1/singer'), 
+		array ('id' => 2, 'key' => 'TestUser/1/singer/pianist'),
+		array ('id' => 3, 'key' => 'TestUser/2/bass'), 
+		array ('id' => 4, 'key' => 'TestUser/2/bass/guitar'),
+		array ('id' => 5, 'key' => 'TestUser/3/lead'),
+		array ('id' => 6, 'key' => 'TestUser/3/lead/guitar'),
+		array ('id' => 7, 'key' => 'TestUser/4/drummer'),
+		array ('id' => 8, 'key' => 'TestUser/4/drummer/percussions'),
 	); 
 } 
 ?>
