@@ -347,6 +347,10 @@ class AclAuthTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 	
+	# =================================================
+	# Default Behavior
+	# =================================================
+	
 	// Behavior: User can access the page since no special permission are in place
 	function testEmpty() {
 		$this->__login();
@@ -355,6 +359,10 @@ class AclAuthTest extends CakeTestCase {
 		$result = $this->__testStartupConfig($url);
 		$this->assertTrue($result);
 	}
+	
+	# =================================================
+	# Allow/Deny *
+	# =================================================
 	
 	// Behavior: User is denied from accessing the page.
 	function testDenyAll() {
@@ -390,6 +398,10 @@ class AclAuthTest extends CakeTestCase {
 		$this->assertTrue($result);
 	} 
 	
+	# =================================================
+	# Allow/Deny group
+	# =================================================
+	
 	// Behavior: User needs to be in a group to access the page
 	function testAllowForGroup() {
 		$this->__login();
@@ -417,6 +429,146 @@ class AclAuthTest extends CakeTestCase {
 		$this->assertTrue($result); 
 		// true - not in the group
 	}
+	
+	# =================================================
+	# Starting matching tests with fixtures
+	# =================================================
+	 
+	function testMatch() {
+		$this->__login();
+		
+		// check if authed user has 'singer' role in DB
+		$testUser = new TestUser();
+		$testUser->id = $this->Controller->TestAuth->user('id');
+		$roles = $testUser->roles(true);
+		$this->assertTrue(in_array('singer', $roles));
+		
+		// allow 'singer'
+		$url = '/auth_test/add';
+		$result = $this->__testStartupConfig($url, array(
+			'allow' => array(
+				'add' => array('singer')  
+			)
+		));
+		$this->assertTrue($result); 
+		
+		// deny 'singer'
+		$url = '/auth_test/add';
+		$result = $this->__testStartupConfig($url, array(
+			'deny' => array(
+				'add' => array('singer')  
+			)
+		));
+		$this->assertFalse($result);
+	} 
+	
+	function testMatchSentence() {
+		$this->__login();
+		
+		// check if authed user has 'singer' role in DB
+		$testUser = new TestUser();
+		$testUser->id = $this->Controller->TestAuth->user('id');
+		$result = $testUser->is('singer', 'pianist');
+		$this->assertTrue($result);
+		
+		// allow 'singer'
+		$url = '/auth_test/add';
+		$result = $this->__testStartupConfig($url, array(
+			'allow' => array(
+				'add' => array(
+					'singer' => array('pianist')
+				)
+			)
+		));
+		$this->assertTrue($result); 
+		
+		// deny 'singer'
+		$url = '/auth_test/add';
+		$result = $this->__testStartupConfig($url, array(
+			'deny' => array(
+				'add' => array(
+					'singer' => array('pianist')
+				)
+			)
+		));
+		$this->assertFalse($result);
+	}
+	
+	function testMatchMultiple() {
+		$this->__login();
+		
+		// check if authed user has 'singer' role in DB
+		$testUser = new TestUser();
+		$testUser->id = $this->Controller->TestAuth->user('id');
+		$testUser->is('writer', true); // add writer
+		$result = $testUser->is(array('singer','writer'));
+		$this->assertTrue($result);
+		
+		// allow 'singer'
+		$url = '/auth_test/add';
+		$result = $this->__testStartupConfig($url, array(
+			'allow' => array(
+				'add' => array(
+					array('singer','writer')
+				)
+			)
+		));
+		$this->assertTrue($result); 
+		
+		// deny 'singer'
+		$url = '/auth_test/add';
+		$result = $this->__testStartupConfig($url, array(
+			'deny' => array(
+				'add' => array(
+					array('singer','writer')
+				)
+			)
+		));
+		$this->assertFalse($result);
+	}
+	
+	function testMatchMixed() {
+		$this->__login();
+		
+		// check if authed user has 'singer' role in DB
+		$testUser = new TestUser();
+		$testUser->id = $this->Controller->TestAuth->user('id');
+		$testUser->is('writer', true); // add writer
+		$result = $testUser->is(array('singer','writer'));
+		$this->assertTrue($result);
+		
+		// allow 'singer'
+		$url = '/auth_test/add';
+		$result = $this->__testStartupConfig($url, array(
+			'allow' => array(
+				'add' => array(
+					'member',
+					'member' => 'editor',
+					array('singer','writer')
+				)
+			)
+		));
+		$this->assertTrue($result); 
+		
+		// deny 'singer'
+		$url = '/auth_test/add';
+		$result = $this->__testStartupConfig($url, array(
+			'deny' => array(
+				'add' => array(
+					'member',
+					'member' => 'editor',
+					array('singer','writer')
+				)
+			)
+		));
+		$this->assertFalse($result);
+	}
+	
+	
+	
+	
+	
+	
 	
 }
 
