@@ -200,10 +200,11 @@ class InmateBehavior extends ModelBehavior {
 	}
 	
 	/**
-	 * Deletes all entries for currento object matching given role
+	 * Deletes all entries for object
 	 *
 	 * @param 	object 	$model
-	 * @param 	mixed 	$role string
+	 * @param 	mixed 	$role (optional)
+	 * @param 	mixed 	$sentence (optional)
 	 * 
 	 * @return 	mixed 	roles data, or false if nothing to do
 	 */
@@ -220,7 +221,8 @@ class InmateBehavior extends ModelBehavior {
 		if (empty($role)) { 
 			$this->_cache('reset', $model);
 		} 
-		elseif (!empty($deleted)) {
+		
+		if (!empty($deleted)) {
 			$this->_cache('diff', $model, $deleted, $cached);
 			return array_map(array($this, '_unpack'), $deleted);
 		}
