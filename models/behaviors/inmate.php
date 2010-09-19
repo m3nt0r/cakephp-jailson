@@ -101,7 +101,7 @@ class InmateBehavior extends ModelBehavior {
 		$checked = $keys = array();
 		$cached = $this->cachedRoles($model);
 		
-		if ($cached === false) {
+		if ($cached === false || $this->settings[$model->alias]['disableCache']) {
 			foreach ($role as $part) {
 				$keys[]= $this->_pack($model, $part, $sentence);
 			}
@@ -176,10 +176,16 @@ class InmateBehavior extends ModelBehavior {
 		
 		$cached = (array) $this->cachedRoles($model);
 		
-		foreach ($role as $part) {
-			$key = $this->_pack($model, $part, $sentence);
-			if (in_array($key, $cached)) // only try cached
-				$keys[]= $key;
+		if ($this->settings[$model->alias]['disableCache']) {
+			foreach ($role as $part) {
+				$keys[]= $this->_pack($model, $part, $sentence);
+			}
+		} else {
+			foreach ($role as $part) {
+				$key = $this->_pack($model, $part, $sentence);
+				if (in_array($key, $cached)) // only try cached
+					$keys[]= $key;
+			}
 		}
 		
 		if (!empty($keys))
@@ -206,7 +212,7 @@ class InmateBehavior extends ModelBehavior {
 		$key = $this->_pack($model, $role, $sentence);
 		$cached = (array) $this->cachedRoles($model);
 		
-		if (!in_array($key, $cached))
+		if (!in_array($key, $cached) && !$this->settings[$model->alias]['disableCache'])
 			return false; // empty cache is 'free' enough
 		
 		$deleted = $this->Inmate->removeTree($key);
