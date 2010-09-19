@@ -767,6 +767,17 @@ class AclAuthTest extends CakeTestCase {
 		));
 		$this->assertTrue($result);
 		
+		// bunch of deny, allows. using "allow edit" for test
+		$url = '/auth_test/delete';
+		$result = $this->__testStartupConfig($url, array(
+			'deny' => array('*'),
+			'allow' => array(
+				'add' => array('member'), // false
+				'edit' => array('singer' => 'pianist'), // true
+				'delete' => array('singer'), // true
+			)
+		));
+		$this->assertTrue($result);
 	}
 	
 	

@@ -107,13 +107,6 @@ class AclAuthComponent extends Object {
 		
 		$currentPath = $controller .'/'. $action;
 		
-		if (array_key_exists("{$controller}/*", $this->allow)) {
-			return true; // the entire controller is allowed
-		}
-		if (array_key_exists("{$controller}/*", $this->deny)) {
-			return false; // the entire controller is denied
-		}
-		
 		$allowAll = false;
 		$denyAll = false;
 		
@@ -121,16 +114,15 @@ class AclAuthComponent extends Object {
 			'deny' => 'null',
 			'allow' => 'null'
 		);
-		
-		// process denied
-		if (array_key_exists($currentPath, $this->deny)) {
-			$required = $this->deny[$currentPath];
-			if (in_array('*', $required)) {
-				$permissions['deny'] = true;
-				$denyAll = true;
-			} else {
-				$permissions['deny'] = $this->_assert($userModel, $required);
-			}
+
+		// process controller wildcard, KISS
+		if (array_key_exists("{$controller}/*", $this->allow)) {
+			if (empty($this->allow[$currentPath])) $this->allow[$currentPath] = array();
+			$this->allow[$currentPath] = array_merge($this->allow[$currentPath], array('*'));
+		}
+		if (array_key_exists("{$controller}/*", $this->deny)) {
+			if (empty($this->deny[$currentPath])) $this->deny[$currentPath] = array();
+			$this->deny[$currentPath] = array_merge($this->deny[$currentPath], array('*'));
 		}
 		
 		// process allowed
@@ -141,6 +133,17 @@ class AclAuthComponent extends Object {
 				$allowAll = true;
 			} else {
 				$permissions['allow'] = $this->_assert($userModel, $required);
+			}
+		}
+
+		// process denied
+		if (array_key_exists($currentPath, $this->deny)) {
+			$required = $this->deny[$currentPath];
+			if (in_array('*', $required)) {
+				$permissions['deny'] = true;
+				$denyAll = true;
+			} else {
+				$permissions['deny'] = $this->_assert($userModel, $required);
 			}
 		}
 
