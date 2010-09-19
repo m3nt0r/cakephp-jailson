@@ -65,6 +65,7 @@ class UserTestCase extends CakeTestCase {
 	}
 	public function endTest() {
 		unset($this->User);
+		unset($this->Project);
 	}
 	
 	# =================================================
