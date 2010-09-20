@@ -460,17 +460,21 @@ Current structure:
   [allow]
   Downloads.view[] = subscriber.downloads
   Comments.add[] = member
-  Comments.edit[] = admin,member
+  Comments.edit[] = admin,member,subscriber
+  Comments.delete[] = member.comment:535
 </pre>
 
 The dot-nation converts to a subject:
-<pre>array('subscriber' => 'downloads')</pre>
+<pre>array('subscriber' => array('downloads'))</pre>
+
+Colon after dot-nation converts to a subject with subjectId:
+<pre>array('member' => array('comment', '535'))</pre>
 
 The comma-nation converts to a "and"-list:
-<pre>array('admin','member')</pre>
+<pre>array('admin','member','subscriber')</pre>
 
 Else it's just a single role
-<pre>array('member')</pre>
+<pre>'member'</pre>
 
 To enable this you have to setup the component like this:
 
