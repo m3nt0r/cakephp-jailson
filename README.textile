@@ -464,19 +464,13 @@ Current structure:
 </pre>
 
 The dot-nation converts to a subject:
-<pre>
-	array('subscriber' => 'downloads')
-</pre>
+<pre>array('subscriber' => 'downloads')</pre>
 
 The comma-nation converts to a "and"-list:
-<pre>
-	array('admin','member')
-</pre>
+<pre>array('admin','member')</pre>
 
 Else it's just a single role
-<pre>
-	array('member')
-</pre>
+<pre>array('member')</pre>
 
 To enable this you have to setup the component like this:
 
