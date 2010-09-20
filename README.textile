@@ -443,13 +443,87 @@ you're own profile in your @core.php@ and pass the name of the profile to the Be
 </pre>
 
 
+h2. Load rules from different Sources
+
+Fresh from testing. Currently working on a solid and easy way to load rules not 
+only from the component array, but also from @.ini@ files and optional models.
+
+h3. Loading from INI
+
+Current structure:
+
+<pre>
+  [deny]
+  Downloads.view[] = *
+
+  [allow]
+  Downloads.view[] = subscriber.downloads
+  Comments.add[] = member
+  Comments.edit[] = admin,member
+</pre>
+
+The dot-nation converts to a subject:
+<pre>
+<code>array('subscriber' => 'downloads')</code>
+</pre>
+
+The comma-nation converts to a list:
+<pre>
+<code>array('admin','member')</code>
+</pre>
+
+Else it's just a single role
+<pre>
+<code>array('member')</code>
+</pre>
+
+To enable this you have to setup the component like this:
+
+<pre>
+<code>
+	class AppController extends Controller {
+		var $components = array(
+			'Jailson.AclAuth' => array(
+				'loadFrom' => 'config/jailson.ini'
+			)
+		);
+	}
+</code>
+</pre>
+
+h3. Loading from Model
+
+The model has a fixed set of required fields. The component itself will do 
+all the transformation. A schema will be added after i've added tests for this
+new functionality.
+
+There is no example yet, but in essence setting this up will be a matter of providing
+the name of the model instead of a path a file.
+
+<pre>
+<code>
+	class AppController extends Controller {
+		var $components = array(
+			'Jailson.AclAuth' => array(
+				'loadFrom' => 'JailsonRule' // name of the Model
+			)
+		);
+	}
+</code>
+</pre>
+
+Stay tuned.
+
 h2. Current state
 
-This is the first draft. I've written everything from scratch. Everything 
-described in this document works for me on 1.3.3, but that doesn't imply that it 
-also does for you. I kept the source clean and simple tho. Consider it beta. ;) 
+The current implementation is alpha. The API may change at some point. However,
+most of the core functionality is solid based on the tests provided. I am still 
+adding new stuff i find useful, such as "loading from different sources".
 
-Feel free to clone, fork and play around with it. Pull requests welcome!
+Once tests for loadFrom are up and runnig, object based access control comes next.
+
+Feel free to clone, fork and play around with it. 
+Pull requests welcome!
 
 h3. Contact
 

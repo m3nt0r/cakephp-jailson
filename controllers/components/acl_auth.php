@@ -55,6 +55,13 @@ class AclAuthComponent extends Object {
 	public $authClass = 'Auth';
 	
 	/**
+	 * Additional Rules Source
+	 * 
+	 * Name of a model or a path to a ini file.
+	 */
+	public $loadFrom = '';
+	
+	/**
 	 * Initialize the ACL Component
 	 * 
 	 * - Import and configure the AuthComponent or throw error if missing
@@ -75,10 +82,35 @@ class AclAuthComponent extends Object {
 			$this->_Auth->authorize = 'object';
 			$this->_Auth->object = $this;
 		} else {
-			trigger_error(__("Could not find {$this->authClass}Component. Please include {$this->authClass} in Controller::\$components.", true), E_USER_WARNING);
+			trigger_error("Could not find {$this->authClass}Component. Please include {$this->authClass} in Controller::\$components.", E_USER_WARNING);
+		}
+		
+		debug ($this->deny);
+		
+		// Check loadFrom option
+		if (strstr($this->loadFrom, DS)) {
+			$this->_importFromIni();
+		} elseif (!empty($this->loadFrom)) {
+			$this->_importFromModel();
 		}
 	}
 	
+	/**
+	 * Set Rules
+	 *
+	 * @param	array	$rules	[allow=,deny=]
+	 */
+	public function setRules($rules) {
+		if (!empty($rules['allow'])) {
+			$rules['allow'] = array_merge($this->allow, $rules['allow']);
+			$this->allow = $rules['allow'];
+		}
+		if (!empty($rules['deny'])) {
+			$rules['deny'] = array_merge($this->deny, $rules['deny']);
+			$this->deny = $rules['deny'];
+		}
+		return $rules;
+	}
 	
 	/**
 	 * Called by AuthComponent
@@ -98,12 +130,15 @@ class AclAuthComponent extends Object {
 				trigger_error(__("Looks like your userModel is missing the behavior. Please include 'Jailson.Inmate' in {$userModel->name}::\$actsAs.", true), E_USER_WARNING);
 		}
 		
+		// inheritance
 		if (!empty($this->__settings['deny'])) {
 			$this->deny = $this->_normalizePermissions($this->deny, $this->__settings['deny']);
 		}
 		if (!empty($this->__settings['allow'])) {
 			$this->allow = $this->_normalizePermissions($this->allow, $this->__settings['allow']);
 		}
+		
+		debug ($this->allow);
 		
 		$currentPath = $controller .'/'. $action;
 		
@@ -166,6 +201,13 @@ class AclAuthComponent extends Object {
 		return true;
 	}
 	
+	/**
+	 * Test current required rules against userModel
+	 *
+	 * @param object $userModel
+	 * @param array $required
+	 * @return boolean
+	 */
 	protected function _assert($userModel, $required) {
 		
 		$results = array();	
@@ -181,6 +223,72 @@ class AclAuthComponent extends Object {
 		}
 		
 		return in_array(true, $results, $strict=true);
+	}
+	
+	/**
+	 * Importer: Load Rules from Ini File
+	 * @return mixed Imported Rules or False
+	 */
+	protected function _importFromIni() {
+		
+		$iniFilePath = APP . $this->loadFrom;
+		
+		if (!is_file($iniFilePath)) {
+			trigger_error("Could not read INI file at '{$iniFilePath}'. Wrong path maybe?", E_USER_WARNING);
+		} else {
+			$iniRules = parse_ini_file($iniFilePath, true);
+			$rules = array();
+			foreach ($iniRules as $type => $controllerActions) {
+				foreach ($controllerActions as $controllerAction => $perms) {
+					
+					list($controller, $action) = explode('.', $controllerAction);
+					
+					foreach ($perms as $iniPerm) {
+						$ands = explode(',', $iniPerm);
+						$subs = explode('.', $iniPerm);
+						
+						if (count($ands) > 1) {
+							$permissions = $ands;
+						} elseif (count($subs) == 2) {
+							$permissions = array($subs[0] => $subs[1]);
+						} else {
+							$permissions = array($iniPerm);
+						}
+						
+						$rules[$type]["{$controller}/{$action}"] = $permissions;
+					}
+				}
+			}
+			return $this->setRules($rules);
+		}
+		return false;
+	}
+	
+	/**
+	 * Importer: Load Rules from Model
+	 * @return mixed Imported Rules or False
+	 */
+	protected function _importFromModel() {
+		$ruleModel = ClassRegistry::init($this->loadFrom);
+		$ruleModelResult = $ruleModel->find('all', array(
+			'fields' => array('type', 'controller', 'action', 'role', 'subject', 'subjectId'),
+			'conditions' => array('controller' => $controller->name, 'action' => $controller->action),
+			'recursive' => -1
+		));
+		if (!empty($ruleModelResult)) {
+			$rulesFound = $ruleModelResult[$ruleModel->alias];
+			$rules = array();
+			foreach ($rulesFound as $rule) {
+				$subjects = array_merge(explode(',', $rule['subject']), array($rule['subjectId']));
+				if (!empty($subjects)) {
+					$rules[$rule['type']][] = array($rule['role'] => $subjects);
+				} else {
+					$rules[$rule['type']][] = array($rule['role']);
+				}
+			}
+			return $this->setRules($rules);
+		}
+		return false;
 	}
 	
 	/**
