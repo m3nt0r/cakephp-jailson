@@ -786,5 +786,68 @@ class AclAuthTest extends CakeTestCase {
 		));
 		$this->assertTrue($result);
 	}
+	
+	# =================================================
+	# Allow * / Deny X=>Y 
+	# =================================================
+	
+	function test_DenySentence_AllowX() {
+		$this->__login();
+		
+		// NO ACCESS, in any denied group + subgroup
+		$url = '/auth_test/add';
+		$result = $this->__testStartupConfig($url, array(
+			'deny' => array(
+				'add' => array(
+					'drummer',
+					'writer',
+					'singer' => array('pianist') // match
+				)
+			),
+			'allow' => array(
+				'add' => array('*') // deny specific action
+			)
+		));
+		$this->assertFalse($result);
+		
+		// NO ACCESS, in any denied group + subgroup
+		$url = '/auth_test/add';
+		$result = $this->__testStartupConfig($url, array(
+			'deny' => array(
+				'add' => array(
+					'drummer',
+					'writer',
+					'singer' => array('pianist') // match
+				)
+			),
+			'allow' => array(
+				'*' // allow all actions
+			)
+		));
+		$this->assertFalse($result);
+		
+		// REMOVE FROM denied GROUP
+		$testUser = new TestUser();
+		$testUser->id = 1;
+		$testUser->release('singer', 'pianist');
+		
+		// ACCESS, not in any denied group
+		$url = '/auth_test/add';
+		$result = $this->__testStartupConfig($url, array(
+			'deny' => array(
+				'add' => array(
+					'drummer',
+					'writer',
+					'singer' => array('pianist') // deleted, so no match
+				)
+			),
+			'allow' => array(
+				'*' // allow all actions
+			)
+		));
+		$this->assertTrue($result);
+	}
+	
+	
 }
 ?>
