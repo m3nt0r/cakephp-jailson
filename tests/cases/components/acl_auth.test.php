@@ -785,6 +785,25 @@ class AclAuthTest extends CakeTestCase {
 			)
 		));
 		$this->assertTrue($result);
+		
+		// REMOVE FROM denied GROUP
+		$testUser = new TestUser();
+		$testUser->id = 1;
+		$testUser->release('singer', 'pianist');
+		
+		// NO ACCESS, not in any allowed group
+		$url = '/auth_test/add';
+		$result = $this->__testStartupConfig($url, array(
+			'deny' => array('*'), // deny all actions
+			'allow' => array(
+				'add' => array(
+					'drummer',
+					'writer',
+					'singer' => array('pianist') // no longer match, deleted
+				)
+			)
+		));
+		$this->assertFalse($result);
 	}
 	
 	# =================================================
@@ -805,7 +824,7 @@ class AclAuthTest extends CakeTestCase {
 				)
 			),
 			'allow' => array(
-				'add' => array('*') // deny specific action
+				'add' => array('*') // allow specific action
 			)
 		));
 		$this->assertFalse($result);
@@ -847,6 +866,9 @@ class AclAuthTest extends CakeTestCase {
 		));
 		$this->assertTrue($result);
 	}
+	
+	
+	
 	
 	
 }
