@@ -177,24 +177,28 @@ class AclAuthComponent extends Object {
 				$permissions['deny'] = $this->_assert($userModel, $required);
 			}
 		}
-
-		if ($permissions['allow'] === true && $permissions['deny'] === true) {
+		
+		//debug (array_merge($permissions, compact('denyAll', 'allowAll')));
+		
+		if ($permissions['deny'] === 'null' && $permissions['allow'] === 'null') {
 			if ($denyAll) {
-				return true;
+				return false;
 			}
-			return false;
+			return true;
 		}
-		if ($permissions['deny'] === true) {
-			return false;
+		
+		if ($permissions['deny'] === false) { // has not denied group
+			return true;
 		}
-		if ($permissions['allow'] === false && $permissions['deny'] === false) {
-			return false;
+		
+		if ($permissions['allow'] === true) { // has allowed group
+			if ($permissions['deny'] === true && !$denyAll) {
+				return false;
+			}
+			return true;
 		}
-		if ($permissions['allow'] === false) {
-			return false;
-		}
-
-		return true;
+		
+		return false;
 	}
 	
 	/**
