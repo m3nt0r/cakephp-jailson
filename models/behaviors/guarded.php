@@ -42,7 +42,10 @@ class GuardedBehavior extends ModelBehavior {
 		$_defaultConfig = array(
 			'inmateModel' => 'Jailson.Inmate',
 			
-			'find' => array(),
+			'find' => array(
+				'allow' => array(),
+				'deny' => array()
+			),
 			'save' => array(),
 			'delete' => array(),
 		);
@@ -50,7 +53,8 @@ class GuardedBehavior extends ModelBehavior {
 		
 		// load storage model
 		if (!is_object($this->Inmate)) {
-			$this->Inmate = ClassRegistry::init($this->settings[$model->alias]['inmateModel']);
+			$inmateModel = $this->settings[$model->alias]['inmateModel'];
+			$this->Inmate = ClassRegistry::init($inmateModel);
 		}
 	}
 	
@@ -84,9 +88,34 @@ class GuardedBehavior extends ModelBehavior {
 		);
 		
 		if (!empty($roles)) {
-			$conditions = array_merge($conditions, 
-				array('Jailson.role' => $roles)
-			);
+			
+			// if no keyword present, but not empty, assume allow-list
+			if (empty($roles['allow']) && empty($roles['deny'])) {
+				$_roles = $roles;
+				$roles = array(
+					'deny' => array(),
+					'allow' => $_roles
+				);
+			}
+			
+			if (!empty($roles['allow'])) {
+				if(sizeof($roles['allow'])==1)
+					$roles['allow'][] = '__'; // fix for query builder
+				
+				$conditions = array_merge($conditions, 
+					array('Jailson.role' => $roles['allow'])
+				);
+			}
+			
+			if (!empty($roles['deny'])) {
+				if(sizeof($roles['deny'])==1)
+					$roles['deny'][] = '__'; // fix for query builder
+				
+				$conditions = array_merge($conditions, 
+					array('Jailson.role NOT' => $roles['deny'])
+				);
+			}
+			
 		} else {
 			return false; // dont bind if there are no rules.
 		}
