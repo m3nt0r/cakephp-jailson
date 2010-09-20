@@ -251,13 +251,6 @@ class AclAuthComponent extends Object {
 						$subs = explode('.', $iniPerm);
 						
 						if (count($ands) > 1) {
-							foreach ($ands as $ax => $andPerm) {
-								$_andSplit = explode('.', $andPerm);
-								if (count($_andSplit)>1) {
-									$ands[$_andSplit[0]] = explode(':', $_andSplit[1]);
-									unset ($ands[$ax]);
-								}
-							}
 							$permissions = $ands;
 						} elseif (count($subs) == 2) {
 							$ruleIndex = $subs[0];
