@@ -37,7 +37,7 @@ class GuardedBehavior extends ModelBehavior {
 	/**
 	 * Init Storage Model
 	 */
-	function setup($model, $config = array()) {
+	public function setup(&$model, $config = array()) {
 		// options
 		$_defaultConfig = array(
 			'inmateModel' => 'Jailson.Inmate',
@@ -54,42 +54,85 @@ class GuardedBehavior extends ModelBehavior {
 		}
 	}
 	
-	protected function _allowedIds($model, $permissions) {
-		$storedPerms = array();
-		foreach ($permissions as $role) {
-			$key = Storage::pack($this->GuardedObject, $role, $model);
-			$storedPerms = array_map(array('Storage', 'unpack'), $this->Inmate->drilldown($key));
-		}
-		return Set::extract('/subject_id', $storedPerms);
+	/**
+	 * Enable permission chain
+	 */
+	public function beforeFind(&$model, $query) {
+		$this->_bind($model, $this->_perms($model, 'find'));
 	}
 	
-	function beforeFind(&$model, $query) {
-		$permissions = $this->_perms($model, 'find');
-		if (!empty($permissions)) {
-			$id = "{$model->alias}.id";
-			$allowedIds = $this->_allowedIds($model, $permissions);
-			if (!empty($allowedIds)) {
-				if (empty($query['conditions'][$id])) $query['conditions'][$id] = array();
-				$query['conditions'][$id] = array_merge($query['conditions'][$id], $allowedIds);
-			} else {
-				// nasty hack
-				//---------------------------------
-				// either this, or return false - but that will make find() return null.
-				// null sucks in many ways.
-				//---------------------------------
-				$query['conditions'] = array($id.' < 1');
-			}
-		}
-		return $query;
+	/**
+	 * Remove permission chain
+	 */
+	public function afterFind(&$model) {
+		$this->_unbind($model);
 	}
 	
-	function beforeSave(&$model) { }
-	function beforeDelete(&$model, $cascade = true) { }
+	public function beforeSave(&$model) { }
+	public function beforeDelete(&$model, $cascade = true) { }
 	
+
+	/**
+	 * Set chain
+	 */
+	protected function _bind(&$model, $roles = array()) {
+		
+		$inmateModel = $this->settings[$model->alias]['inmateModel'];
+		
+		$conditions = array(
+			'Jailson.what' => $model->alias
+		);
+		
+		if (!empty($roles)) {
+			$conditions = array_merge($conditions, 
+				array('Jailson.role' => $roles)
+			);
+		}
+		
+		$model->bindModel(array('hasOne' => array(
+			'Jailson' => array(
+				'className' => $inmateModel,
+				'type' => 'INNER',
+				'foreignKey' => 'whatId',
+				'conditions' => $conditions
+			)
+		)));
+	}
 	
+	/**
+	 * Remove chain
+	 */
+	protected function _unbind(&$model) {
+		$model->unbindModel(array('hasOne' => array(
+			'Jailson'
+		)), $reset = false);
+	}
 	
+	/**
+	 * Read from settings array (shortcut)
+	 */
 	protected function _perms($model, $action) {
 		return $this->settings[$model->alias][$action];
 	}
 	
+	/**
+	 * Public method to retrieve all IDs that match
+	 * for given role and the current model.
+	 *
+	 * (unused)
+	 */
+	public function getAllowed($model, $roles) {
+		$who = $this->GuardedObject;
+		$allowed = $this->Inmate->find('all', array(
+			'fields' => array('whatId'),
+			'conditions' => array(
+				'who' => $who->alias,
+				'whoId' => $who->id,
+				'what' => $model->alias,
+				'whatId NOT' => null,
+				'role' => $roles
+			)
+		));
+		return Set::extract('/Inmate/whatId', $allowed);
+	}
 }
