@@ -111,7 +111,8 @@ class AclAuthComponent extends Object {
 		}
 		return $rules;
 	}
-	
+
+
 	/**
 	 * Called by AuthComponent
 	 * 
@@ -122,12 +123,23 @@ class AclAuthComponent extends Object {
 	 * @return boolean True if $user is authorized, otherwise false
 	 */
 	public function isAuthorized($user, $controller, $action) {
+		
 		$userModel = $this->_Auth->getModel();
 		$userModel->id = $user[$this->_Auth->userModel]['id'];
 		
-		if (!is_array($userModel->actsAs) || (!array_key_exists('Jailson.Inmate', $userModel->actsAs) && !in_array('Jailson.Inmate', $userModel->actsAs))) {
+		// check for behavior
+		if (!$this->_actsAsInmate($userModel)) {
 			if (basename($_SERVER['SCRIPT_NAME']) != 'test.php')
 				trigger_error(__("Looks like your userModel is missing the behavior. Please include 'Jailson.Inmate' in {$userModel->name}::\$actsAs.", true), E_USER_WARNING);
+				return false;
+		} 
+		
+		// pass configured userModel over to guarded models
+		foreach ($this->_Controller->modelNames as $model) {
+			$modelObj = $this->_Controller->{$model};
+			if ($this->_actsAsGuarded($modelObj)) {
+				$modelObj->Behaviors->Guarded->GuardedObject = $userModel;
+			}
 		}
 		
 		// inheritance
@@ -337,4 +349,21 @@ class AclAuthComponent extends Object {
 		return $normalized;
 	}
 	
+	/**
+	 * Test if $model has the 'Inmate' behavior loaded
+	 * 
+	 * @return boolean
+	 */
+	protected function _actsAsInmate($model) {
+		return (isset($model->Behaviors) && isset($model->Behaviors->Inmate));
+	}
+	
+	/**
+	 * Test if $model has the 'Guarded' behavior loaded
+	 * 
+	 * @return boolean
+	 */
+	protected function _actsAsGuarded($model) {
+		return (isset($model->Behaviors) && isset($model->Behaviors->Guarded));
+	}
 }
