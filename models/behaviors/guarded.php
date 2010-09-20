@@ -87,6 +87,8 @@ class GuardedBehavior extends ModelBehavior {
 			$conditions = array_merge($conditions, 
 				array('Jailson.role' => $roles)
 			);
+		} else {
+			return false; // dont bind if there are no rules.
 		}
 		
 		$model->bindModel(array('hasOne' => array(
