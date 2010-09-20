@@ -85,8 +85,6 @@ class AclAuthComponent extends Object {
 			trigger_error("Could not find {$this->authClass}Component. Please include {$this->authClass} in Controller::\$components.", E_USER_WARNING);
 		}
 		
-		debug ($this->deny);
-		
 		// Check loadFrom option
 		if (strstr($this->loadFrom, DS)) {
 			$this->_importFromIni();
