@@ -380,7 +380,8 @@ h3. Optional Step: Combine with AuthComponent
 <code>
 	class AppController extends Controller {
 		var $components = array(
-			'Auth', 'Jailson.AclAuth' => array(
+			'Auth',
+			'Jailson.AclAuth' => array(
 				// your options
 			)
 		);
@@ -464,17 +465,23 @@ Current structure:
 
 The dot-nation converts to a subject:
 <pre>
-<code>array('subscriber' => 'downloads')</code>
+<code>
+  array('subscriber' => 'downloads')
+</code>
 </pre>
 
-The comma-nation converts to a list:
+The comma-nation converts to a "and"-list:
 <pre>
-<code>array('admin','member')</code>
+<code>
+  array('admin','member')
+</code>
 </pre>
 
 Else it's just a single role
 <pre>
-<code>array('member')</code>
+<code>
+  array('member')
+</code>
 </pre>
 
 To enable this you have to setup the component like this:
