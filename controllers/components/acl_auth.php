@@ -136,8 +136,6 @@ class AclAuthComponent extends Object {
 			$this->allow = $this->_normalizePermissions($this->allow, $this->__settings['allow']);
 		}
 		
-		debug ($this->allow);
-		
 		$currentPath = $controller .'/'. $action;
 		
 		$allowAll = false;
