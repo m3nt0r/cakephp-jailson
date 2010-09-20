@@ -867,8 +867,33 @@ class AclAuthTest extends CakeTestCase {
 		$this->assertTrue($result);
 	}
 	
+	# =================================================
+	# Test INI importer
+	# =================================================
 	
-	
+	function test_ini_importer() {
+		$this->__login();
+		
+		// NO ACCESS, in any denied group + subgroup
+		$url = '/auth_test/add';
+		$result = $this->__testStartupConfig($url, array(
+			'loadFrom' => 'plugins/jailson/tests/fixtures/jailson.ini'
+		));
+		
+		$result = $this->Controller->TestAclAuth->deny;
+		
+		$expected = array(
+			'AuthTest/index' => array('singer'),
+			'AuthTest/add' => array(
+				array('singer', 'writer', 'drummer'),
+				'bass',
+				'drummer',
+				'drummer' => array('project'),
+				'drummer' => array('project', '2534')
+			)
+		);
+		$this->assertEqual($result, $expected);
+	}
 	
 	
 }

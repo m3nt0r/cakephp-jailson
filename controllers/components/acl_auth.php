@@ -73,6 +73,13 @@ class AclAuthComponent extends Object {
 		$this->_set($settings);
 		$this->__settings = $settings;
 		
+		// Check loadFrom option
+		if (strstr($this->loadFrom, DS)) {
+			$this->_importFromIni();
+		} elseif (!empty($this->loadFrom)) {
+			$this->_importFromModel();
+		}
+		
 		// Import controller
 		$this->_Controller =& $controller;
 		
@@ -84,13 +91,6 @@ class AclAuthComponent extends Object {
 		} else {
 			trigger_error("Could not find {$this->authClass}Component. Please include {$this->authClass} in Controller::\$components.", E_USER_WARNING);
 		}
-		
-		// Check loadFrom option
-		if (strstr($this->loadFrom, DS)) {
-			$this->_importFromIni();
-		} elseif (!empty($this->loadFrom)) {
-			$this->_importFromModel();
-		}
 	}
 	
 	/**
@@ -100,12 +100,14 @@ class AclAuthComponent extends Object {
 	 */
 	public function setRules($rules) {
 		if (!empty($rules['allow'])) {
-			$rules['allow'] = array_merge($this->allow, $rules['allow']);
-			$this->allow = $rules['allow'];
+			if (empty($this->__settings['allow'])) $this->__settings['allow'] = array();
+			$rules['allow'] = array_merge($this->__settings['allow'], $rules['allow']);
+			$this->__settings['allow'] = $rules['allow'];
 		}
 		if (!empty($rules['deny'])) {
-			$rules['deny'] = array_merge($this->deny, $rules['deny']);
-			$this->deny = $rules['deny'];
+			if (empty($this->__settings['deny'])) $this->__settings['deny'] = array();
+			$rules['deny'] = array_merge($this->__settings['deny'], $rules['deny']);
+			$this->__settings['deny'] = $rules['deny'];
 		}
 		return $rules;
 	}
@@ -145,7 +147,7 @@ class AclAuthComponent extends Object {
 			'deny' => 'null',
 			'allow' => 'null'
 		);
-
+		
 		// process controller wildcard, KISS
 		if (array_key_exists("{$controller}/*", $this->allow)) {
 			if (empty($this->allow[$currentPath])) $this->allow[$currentPath] = array();
@@ -155,6 +157,7 @@ class AclAuthComponent extends Object {
 			if (empty($this->deny[$currentPath])) $this->deny[$currentPath] = array();
 			$this->deny[$currentPath] = array_merge($this->deny[$currentPath], array('*'));
 		}
+		
 		
 		// process allowed
 		if (array_key_exists($currentPath, $this->allow)) {
@@ -193,7 +196,7 @@ class AclAuthComponent extends Object {
 		
 		if ($permissions['allow'] === true) { // has allowed group
 			if ($permissions['deny'] === true && !$denyAll) {
-				return false;
+				return false; // but matched denied group
 			}
 			return true;
 		}
@@ -206,15 +209,15 @@ class AclAuthComponent extends Object {
 	 *
 	 * @param object $userModel
 	 * @param array $required
-	 * @return boolean
+	 * @return boolean ANY-true?
 	 */
 	protected function _assert($userModel, $required) {
 		
 		$results = array();	
 		foreach ($required as $role => $rule) {
-			if (is_array($rule) && !is_numeric($role)) {					
+			if (is_array($rule) && !is_numeric($role)) {
 				$arguments = array_merge(array($role), $rule);
-			} elseif (is_string($rule) && !is_numeric($role)) {					
+			} elseif (is_string($rule) && !is_numeric($role)) {
 				$arguments = array($role, $rule);
 			} else {
 				$arguments = array($rule);
@@ -237,25 +240,34 @@ class AclAuthComponent extends Object {
 			trigger_error("Could not read INI file at '{$iniFilePath}'. Wrong path maybe?", E_USER_WARNING);
 		} else {
 			$iniRules = parse_ini_file($iniFilePath, true);
-			$rules = array();
+			$rules = array('allow' => array(), 'deny' => array());
 			foreach ($iniRules as $type => $controllerActions) {
 				foreach ($controllerActions as $controllerAction => $perms) {
-					
 					list($controller, $action) = explode('.', $controllerAction);
 					
+					$ruleIndex=0;
 					foreach ($perms as $iniPerm) {
 						$ands = explode(',', $iniPerm);
 						$subs = explode('.', $iniPerm);
 						
 						if (count($ands) > 1) {
+							foreach ($ands as $ax => $andPerm) {
+								$_andSplit = explode('.', $andPerm);
+								if (count($_andSplit)>1) {
+									$ands[$_andSplit[0]] = explode(':', $_andSplit[1]);
+									unset ($ands[$ax]);
+								}
+							}
 							$permissions = $ands;
 						} elseif (count($subs) == 2) {
-							$permissions = array($subs[0] => $subs[1]);
+							$ruleIndex = $subs[0];
+							$permissions = explode(':', $subs[1]);
 						} else {
-							$permissions = array($iniPerm);
+							$permissions = $iniPerm;
 						}
 						
-						$rules[$type]["{$controller}/{$action}"] = $permissions;
+						$rules[$type]["{$controller}/{$action}"][$ruleIndex] = $permissions;
+						$ruleIndex++;
 					}
 				}
 			}
@@ -298,6 +310,12 @@ class AclAuthComponent extends Object {
 	 * @return	array
 	 */
 	protected function _normalizePermissions($array, $targetArray = array()) {
+		
+		if (empty($array) && !empty($targetArray)) {
+			$array = $targetArray; 
+			$targetArray = array();
+		}
+		
 		$normalized = array();
 		foreach ($array as $controllerAction => $requiredRoles) {
 			if ($requiredRoles == '*') {
