@@ -11,7 +11,7 @@
  * @link http://github.com/m3nt0r/cakephp-jailson Repository/Docs
  * @copyright (c) 2010, Kjell Bublitz (http://cakealot.com)
  */
-App::import('Behavior', 'Jailson.Inmate');
+App::import('Lib', 'Jailson.Storage');
 /**
  * Jailson - Guarded Behavior
  * 
@@ -20,7 +20,13 @@ App::import('Behavior', 'Jailson.Inmate');
  * @package plugins.jailson
  * @subpackage plugins.jailson.behaviors
  */
-class GuardedBehavior extends InmateBehavior {
+class GuardedBehavior extends ModelBehavior {
+	
+	/**
+	 * Jailson storage model
+	 * @var Model
+	 */
+	public $Inmate;
 	
 	/**
 	 * The scope of this guard
@@ -35,7 +41,6 @@ class GuardedBehavior extends InmateBehavior {
 		// options
 		$_defaultConfig = array(
 			'inmateModel' => 'Jailson.Inmate',
-			'inmates' => array('User'),
 			
 			'find' => array(),
 			'save' => array(),
@@ -52,19 +57,18 @@ class GuardedBehavior extends InmateBehavior {
 	protected function _allowedIds($model, $permissions) {
 		$storedPerms = array();
 		foreach ($permissions as $role) {
-			$key = $this->_pack($this->GuardedObject, $role, $model);
-			$storedPerms = array_map(array($this,'_unpack'), $this->Inmate->drilldown($key));
+			$key = Storage::pack($this->GuardedObject, $role, $model);
+			$storedPerms = array_map(array('Storage', 'unpack'), $this->Inmate->drilldown($key));
 		}
 		return Set::extract('/subject_id', $storedPerms);
 	}
 	
 	function beforeFind(&$model, $query) {
-		$permissions = $this->_findPerms($model);
-		
+		$permissions = $this->_perms($model, 'find');
 		if (!empty($permissions)) {
+			$id = "{$model->alias}.id";
 			$allowedIds = $this->_allowedIds($model, $permissions);
 			if (!empty($allowedIds)) {
-				$id = "{$model->alias}.id";
 				if (empty($query['conditions'][$id])) $query['conditions'][$id] = array();
 				$query['conditions'][$id] = array_merge($query['conditions'][$id], $allowedIds);
 			} else {
@@ -84,14 +88,8 @@ class GuardedBehavior extends InmateBehavior {
 	
 	
 	
-	protected function _findPerms($model) {
-		return $this->settings[$model->alias]['find'];
-	}
-	protected function _savePerms($model) {
-		return $this->settings[$model->alias]['save'];
-	}
-	protected function _deletePerms($model) {
-		return $this->settings[$model->alias]['delete'];
+	protected function _perms($model, $action) {
+		return $this->settings[$model->alias][$action];
 	}
 	
 }

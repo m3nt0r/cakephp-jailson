@@ -11,6 +11,8 @@
  * @link http://github.com/m3nt0r/cakephp-jailson Repository/Docs
  * @copyright (c) 2010, Kjell Bublitz (http://cakealot.com)
  */
+App::import('Lib', 'Jailson.Storage');
+
 /**
  * Jailson - Inmate Behavior
  * 
@@ -22,23 +24,6 @@
 class InmateBehavior extends ModelBehavior {
 	
 	/**
-	 * Suffixes for semantics
-	 */
-	const ROLE_SUFFIXES = '/(_(of|at|on|by|for|in))?\Z/';
-	
-	/**
-	 * Key Separator
-	 */
-	const SEP = '/';
-	
-	/**
-	 * Key Structure
-	 */
-	protected $_packStruct = array(
-		'inmate', 'inmate_id', 'role', 'subject', 'subject_id'
-	);
-	
-	/**
 	 * Storage Model
 	 * @var Inmate
 	 */
@@ -48,7 +33,6 @@ class InmateBehavior extends ModelBehavior {
 	 * Init Storage Model
 	 */
 	function setup($model, $config = array()) {
-		
 		// options
 		$_defaultConfig = array(
 			'cacheConfig' => 'default',
@@ -104,7 +88,7 @@ class InmateBehavior extends ModelBehavior {
 		
 		if ($cached === false || $this->settings[$model->alias]['disableCache']) {
 			foreach ($role as $part) {
-				$keys[]= $this->_pack($model, $part, $sentence);
+				$keys[]= Storage::pack($model, $part, $sentence);
 			}
 			$found = $this->Inmate->retrieve($keys);
 			if (count($found)) {			
@@ -113,7 +97,7 @@ class InmateBehavior extends ModelBehavior {
 			}
 		} else {
 			foreach ($role as $part) {
-				$key = $this->_pack($model, $part, $sentence);
+				$key = Storage::pack($model, $part, $sentence);
 				if (!in_array($key, $cached)) {
 					$exists = $this->Inmate->retrieve($key);
 					if (!empty($exists)) {
@@ -144,7 +128,7 @@ class InmateBehavior extends ModelBehavior {
 		
 		$keys = array();
 		foreach ($role as $part) {
-			$key = $this->_pack($model, $part, $sentence);
+			$key = Storage::pack($model, $part, $sentence);
 			if (!in_array($key, $cached)) // dont store cached
 				$keys[]= $key;
 		}
@@ -154,7 +138,7 @@ class InmateBehavior extends ModelBehavior {
 		
 		if (!empty($stored)) {
 			$this->_cache('merge', $model, $stored, $cached);
-			return array_map(array($this, '_unpack'), $stored);
+			return array_map(array('Storage', 'unpack'), $stored);
 		}
 		
 		return false; // nothing to do
@@ -179,11 +163,11 @@ class InmateBehavior extends ModelBehavior {
 		
 		if ($this->settings[$model->alias]['disableCache']) {
 			foreach ($role as $part) {
-				$keys[]= $this->_pack($model, $part, $sentence);
+				$keys[]= Storage::pack($model, $part, $sentence);
 			}
 		} else {
 			foreach ($role as $part) {
-				$key = $this->_pack($model, $part, $sentence);
+				$key = Storage::pack($model, $part, $sentence);
 				if (in_array($key, $cached)) // only try cached
 					$keys[]= $key;
 			}
@@ -194,7 +178,7 @@ class InmateBehavior extends ModelBehavior {
 			
 		if (!empty($deleted)) {
 			$this->_cache('diff', $model, $deleted, $cached);
-			return array_map(array($this, '_unpack'), $deleted);
+			return array_map(array('Storage', 'unpack'), $deleted);
 		}
 		
 		return false; // nothing to do
@@ -211,7 +195,7 @@ class InmateBehavior extends ModelBehavior {
 	 */
 	function free($model, $role = null, $sentence = null) {
 		
-		$key = $this->_pack($model, $role, $sentence);
+		$key = Storage::pack($model, $role, $sentence);
 		$cached = (array) $this->cachedRoles($model);
 		
 		if (!in_array($key, $cached) && !$this->settings[$model->alias]['disableCache'])
@@ -225,7 +209,7 @@ class InmateBehavior extends ModelBehavior {
 		
 		if (!empty($deleted)) {
 			$this->_cache('diff', $model, $deleted, $cached);
-			return array_map(array($this, '_unpack'), $deleted);
+			return array_map(array('Storage', 'unpack'), $deleted);
 		}
 		
 		return false;
@@ -241,11 +225,11 @@ class InmateBehavior extends ModelBehavior {
 	 */
 	function roles($model, $justRoles = false) {
 		
-		$keys = (array) $this->Inmate->drilldown($this->_inmateId($model));
+		$keys = (array) $this->Inmate->drilldown(Storage::inmateId($model));
 		
 		$result = array();
 		foreach ($keys as $key) {
-			$data = $this->_unpack($key);
+			$data = Storage::unpack($key);
 			$result[ $data['role'] ][] = $data;
 		}
 		
@@ -293,51 +277,6 @@ class InmateBehavior extends ModelBehavior {
 		return !$this->has($model, $role, $sentence);
 	}
 	
-	
-	/**
-	 * Build inmate id
-	 * 
-	 * @param 	object 	$model
-	 * @return 	string
-	 */
-	protected function _inmateId($model) {
-		return $model->alias . ($model->id ? self::SEP . $model->id : '');
-	}
-	
-	/**
-	 * Build role id
-	 * 
-	 * @param 	object 	$model
-	 * @return 	string
-	 */
-	protected function _roleId($role) {
-		$role = preg_replace(self::ROLE_SUFFIXES, '', $role);
-		return $role;
-	}
-	
-	/**
-	 * Build sentence id
-	 * 
-	 * @param 	object 	$model
-	 * @return 	string
-	 */
-	protected function _sentenceId($var) {
-		if (is_a($var, 'Model')) {
-			return $this->_inmateId($var); 
-		}
-		return $var;
-	}
-	
-	/**
-	 * Cache key for current object
-	 * 
-	 * @param 	object 	$model
-	 * @return 	string
-	 */
-	protected function _cacheId($model) {
-		return $this->_inmateId($model);
-	}
-	
 	/**
 	 * Wrapper for Cache::read
 	 *  get currently cached roles for this object
@@ -350,7 +289,7 @@ class InmateBehavior extends ModelBehavior {
 			return array();
 		
 		$config = $this->settings[$model->alias]['cacheConfig'];
-		$cache = Cache::read($this->_inmateId($model), $config);
+		$cache = Cache::read(Storage::cacheId($model), $config);
 		return $cache;	
 	}
 	
@@ -382,40 +321,8 @@ class InmateBehavior extends ModelBehavior {
 		if ($this->settings[$model->alias]['disableCache'])
 			return $data;
 			
-		$key = $this->_inmateId($model);
-		Cache::write($key, Set::filter($data), $this->settings[$model->alias]['cacheConfig']);
+		Cache::write(Storage::cacheId($model), Set::filter($data), $this->settings[$model->alias]['cacheConfig']);
 		
-		return $data;
-	}
-	
-	/**
-	 * Create string based on model, role and (optional) subject
-	 *
-	 * @param 	object 	$model
-	 * @param 	string 	$role
-	 * @param 	mixed 	$sentence (optional)
-	 * 
-	 * @return	string	a/nice/role/key
-	 */
-	protected function _pack($model, $role, $sentence = null) {
-		return 
-			$this->_inmateId($model) . self::SEP . 
-			$this->_roleId($role) . 
-			($sentence ? self::SEP . $this->_sentenceId($sentence) : '');
-	}
-	
-	/**
-	 * Extract all data from key and return assoc array
-	 *
-	 * @param 	string 	$key
-	 * @return 	array
-	 */
-	protected function _unpack($key) {
-		$data = array();
-		$values = explode(self::SEP, $key);
-		foreach ($values as $index => $value) {
-			$data[$this->_packStruct[$index]] = $value;
-		}
 		return $data;
 	}
 	
@@ -427,7 +334,7 @@ class InmateBehavior extends ModelBehavior {
 	 */
 	private function __parseArgs($args) {
 		$model = $args[0];
-		$role = preg_replace(self::ROLE_SUFFIXES, '', $args[1]);
+		$role = Storage::role($args[1]);
 		
 		$sentence = null; 
 		if (count($args) >= 3) {

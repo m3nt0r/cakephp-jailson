@@ -11,75 +11,11 @@
  * @link http://github.com/m3nt0r/cakephp-jailson Repository/Docs
  * @copyright (c) 2010, Kjell Bublitz (http://cakealot.com)
  */
-
-App::import('Model','Jailson.Inmate');  
 App::import('Behavior','Jailson.Inmate');
 
-class TestInmateBehavior extends InmateBehavior {
-	public function z_pack($model, $role, $sentence = null) {
-		return parent::_pack($model, $role, $sentence);
-	}
-	public function z_unpack($model, $key) {
-		return parent::_unpack($key);
-	}
-}
-
-if (!class_exists('TestInmate')) {
-	class TestInmate extends Inmate {
-		public $useTable = 'test_inmates';
-		public $useDbConfig = "test_suite";
-		public $cacheSources = false;
-		public $hasAndBelongsToMany = array();
-		public $belongsTo = array();
-		public $hasOne = array();
-		public $hasMany = array();
-	}
-}
-
-if (!class_exists('TestUser')) {
-	class TestUser extends AppModel {
-		public $useTable = 'test_users';
-		public $useDbConfig = "test_suite";
-		public $cacheSources = false;
-		public $actsAs = array(
-			'TestInmate' => array(
-				'inmateModel' => 'TestInmate',
-				'disableCache' => true
-			)
-		);
-	}
-}
-
-class TestObject extends AppModel {
-// simple i/o
-	public $useTable = false;
-	public $actsAs = array(
-		'TestInmate' => array(
-			'inmateModel' => 'TestInmate',
-			'disableCache' => true
-		)
-	);
-}
-class LongTestObjectWithNoRealUse extends AppModel {
-// I've seen worse
-	public $useTable = false;
-	public $actsAs = array(
-		'TestInmate' => array(
-			'inmateModel' => 'TestInmate',
-			'disableCache' => true
-		)
-	);
-}
-class Solo extends AppModel {
-// teh lonely
-	public $useTable = false;
-	public $actsAs = array(
-		'TestInmate' => array(
-			'inmateModel' => 'TestInmate',
-			'disableCache' => true
-		)
-	);
-}
+class Solo {}
+class TestObject{}
+class LongTestObjectWithNoRealUse {}
 
 /**
  * Inmate Behavior Tests
@@ -97,29 +33,38 @@ class InmateBehaviorTest extends CakeTestCase {
 	# =================================================
 	
 	public function testPack() {
+
+		$solo = new Solo();
+		$solo->alias = 'Solo';
+		$solo->id = '4c97b774-8420-4afd-a4c0-ee535879fe73';
 		
 		$testObj = new TestObject();
+		$testObj->alias = 'TestObject';
 		$testObj->id = 123456;
 		
 		$weirdObj = new LongTestObjectWithNoRealUse();
-		$weirdObj->id = 987;
+		$weirdObj->alias = 'LongTestObjectWithNoRealUse';
+		$weirdObj->id = '4c86c865-9ac0-460f-831c-4c1a929b39d1';
 		
-		$soloObj = new Solo();
-		$soloObj->id = 1;
-		$results[] = $soloObj->z_pack('first');
-		$results[] = $soloObj->z_pack('first', 'one');
-		$results[] = $soloObj->z_pack('second', 'first');
-		$results[] = $soloObj->z_pack('second', 'two');
-		$results[] = $soloObj->z_pack('access', $testObj);
-		$results[] = $soloObj->z_pack('access', $weirdObj);
+		
+
+		$results[] = Storage::pack($solo, 'first');
+		$results[] = Storage::pack($solo, 'first', 'one');
+		$results[] = Storage::pack($solo, 'second', 'first');
+		$results[] = Storage::pack($solo, 'second', 'two');
+		$results[] = Storage::pack($solo, 'access', $testObj);
+		$results[] = Storage::pack($solo, 'access', $weirdObj);
+		
+
+		
 		
 		$expected = array(
-		    'Solo/1/first',
-		    'Solo/1/first/one',
-		    'Solo/1/second/first',
-		    'Solo/1/second/two',
-		    'Solo/1/access/TestObject/123456',
-		    'Solo/1/access/LongTestObjectWithNoRealUse/987',
+		    'Solo/4c97b774-8420-4afd-a4c0-ee535879fe73/first',
+		    'Solo/4c97b774-8420-4afd-a4c0-ee535879fe73/first/one',
+		    'Solo/4c97b774-8420-4afd-a4c0-ee535879fe73/second/first',
+		    'Solo/4c97b774-8420-4afd-a4c0-ee535879fe73/second/two',
+		    'Solo/4c97b774-8420-4afd-a4c0-ee535879fe73/access/TestObject/123456',
+		    'Solo/4c97b774-8420-4afd-a4c0-ee535879fe73/access/LongTestObjectWithNoRealUse/4c86c865-9ac0-460f-831c-4c1a929b39d1',
 		);
 		$this->assertEqual($results, $expected);
 	}
@@ -131,83 +76,98 @@ class InmateBehaviorTest extends CakeTestCase {
 	public function testUnPack() {
 		
 		$data = array(
-		    'Solo/1/first',
-		    'Solo/1/first/one',
-		    'Solo/1/second/first',
-		    'Solo/1/second/two',
-		    'Solo/1/access/TestObject/123456',
-		    'Solo/1/access/LongTestObjectWithNoRealUse/987',
+		    'Solo/4c97b774-8420-4afd-a4c0-ee535879fe73/first',
+		    'Solo/4c97b774-8420-4afd-a4c0-ee535879fe73/first/one',
+		    'Solo/4c97b774-8420-4afd-a4c0-ee535879fe73/second/first',
+		    'Solo/4c97b774-8420-4afd-a4c0-ee535879fe73/second/two',
+		    'Solo/4c97b774-8420-4afd-a4c0-ee535879fe73/access/TestObject/123456',
+		    'Solo/4c97b774-8420-4afd-a4c0-ee535879fe73/access/LongTestObjectWithNoRealUse/4c86c865-9ac0-460f-831c-4c1a929b39d1',
 		);
-		
-		$testObj = new TestObject();
 		
 		$results = array();
 		foreach ($data as $key) {
-			$results[] = $testObj->z_unpack($key);			
+			$results[] = Storage::unpack($key);
 		}
 		
 		$expected = array(
 			array(
-				'inmate' => 'Solo',
-				'inmate_id' => '1',
+				'who' => 'Solo',
+				'whoId' => '4c97b774-8420-4afd-a4c0-ee535879fe73',
 				'role' => 'first',
 			),array(
-				'inmate' => 'Solo',
-				'inmate_id' => '1',
+				'who' => 'Solo',
+				'whoId' => '4c97b774-8420-4afd-a4c0-ee535879fe73',
 				'role' => 'first',
-				'subject' => 'one',
+				'what' => 'one',
 			),array(
-				'inmate' => 'Solo',
-				'inmate_id' => '1',
+				'who' => 'Solo',
+				'whoId' => '4c97b774-8420-4afd-a4c0-ee535879fe73',
 				'role' => 'second',
-				'subject' => 'first',
+				'what' => 'first',
 			),array(
-				'inmate' => 'Solo',
-				'inmate_id' => '1',
+				'who' => 'Solo',
+				'whoId' => '4c97b774-8420-4afd-a4c0-ee535879fe73',
 				'role' => 'second',
-				'subject' => 'two',
+				'what' => 'two',
 			),array(
-				'inmate' => 'Solo',
-				'inmate_id' => '1',
+				'who' => 'Solo',
+				'whoId' => '4c97b774-8420-4afd-a4c0-ee535879fe73',
 				'role' => 'access',
-				'subject' => 'TestObject',
-				'subject_id' => '123456',
+				'what' => 'TestObject',
+				'whatId' => '123456',
 			),array(
-				'inmate' => 'Solo',
-				'inmate_id' => '1',
+				'who' => 'Solo',
+				'whoId' => '4c97b774-8420-4afd-a4c0-ee535879fe73',
 				'role' => 'access',
-				'subject' => 'LongTestObjectWithNoRealUse',
-				'subject_id' => '987',
+				'what' => 'LongTestObjectWithNoRealUse',
+				'whatId' => '4c86c865-9ac0-460f-831c-4c1a929b39d1',
 			)
 		);
 		
 		$this->assertEqual($results, $expected);
 		
 		$key = '1';
-		$result = $testObj->z_unpack($key);
+		$result = Storage::unpack($key);
 		$expected = array(
-			'inmate' => '1'
+			'who' => '1'
 		);
 		$this->assertEqual($result, $expected);
 		
 		$key = '1/2';
-		$result = $testObj->z_unpack($key);
+		$result = Storage::unpack($key);
 		$expected = array(
-			'inmate' => '1',
-			'inmate_id' => '2'
+			'who' => '1',
+			'whoId' => '2'
 		);
 		$this->assertEqual($result, $expected);
 		
-		// etc..
+		$key = '1/2/3';
+		$result = Storage::unpack($key);
+		$expected = array(
+			'who' => '1',
+			'whoId' => '2',
+			'role' => '3',
+		);
+		$this->assertEqual($result, $expected);
+		
+		$key = '1/2/3/4';
+		$result = Storage::unpack($key);
+		$expected = array(
+			'who' => '1',
+			'whoId' => '2',
+			'role' => '3',
+			'what' => '4',
+		);
+		$this->assertEqual($result, $expected);
 		
 		$key = '1/2/3/4/5';
-		$result = $testObj->z_unpack($key);
+		$result = Storage::unpack($key);
 		$expected = array(
-			'inmate' => '1',
-			'inmate_id' => '2',
+			'who' => '1',
+			'whoId' => '2',
 			'role' => '3',
-			'subject' => '4',
-			'subject_id' => '5',
+			'what' => '4',
+			'whatId' => '5',
 		);
 		$this->assertEqual($result, $expected);
 		

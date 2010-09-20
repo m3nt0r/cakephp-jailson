@@ -88,8 +88,8 @@ class UserTestCase extends CakeTestCase {
 		$result = $this->User->lockAs('beatle');
 		$expected = array(
 			array(
-				'inmate' => 'TestUser',
-				'inmate_id' => '1',
+				'who' => 'TestUser',
+				'whoId' => '1',
 				'role' => 'beatle'
 			)
 		);
@@ -112,11 +112,11 @@ class UserTestCase extends CakeTestCase {
 		$result = $this->User->lockAs('member', $this->Project);
 		$expected = array(
 			array(
-				'inmate' => 'TestUser',
-				'inmate_id' => '1',
+				'who' => 'TestUser',
+				'whoId' => '1',
 				'role' => 'member',
-				'subject' => 'TestProject',
-				'subject_id' => '1'
+				'what' => 'TestProject',
+				'whatId' => '1'
 			)
 		);
 		$this->assertEqual($result, $expected);
@@ -132,17 +132,17 @@ class UserTestCase extends CakeTestCase {
 		$result = $this->User->lockAs(array('musician', 'artist'), $this->Project);
 		$expected = array(
 			array(
-				'inmate' => 'TestUser',
-				'inmate_id' => '1',
+				'who' => 'TestUser',
+				'whoId' => '1',
 				'role' => 'musician',
-				'subject' => 'TestProject',
-				'subject_id' => '1'
+				'what' => 'TestProject',
+				'whatId' => '1'
 			),array(
-				'inmate' => 'TestUser',
-				'inmate_id' => '1',
+				'who' => 'TestUser',
+				'whoId' => '1',
 				'role' => 'artist',
-				'subject' => 'TestProject',
-				'subject_id' => '1'
+				'what' => 'TestProject',
+				'whatId' => '1'
 			)
 		);
 		$this->assertEqual($result, $expected);
@@ -152,10 +152,10 @@ class UserTestCase extends CakeTestCase {
 		$result = $this->User->lockAs('member', $this->Project);
 		$expected = array(
 			array(
-				'inmate' => 'TestUser',
-				'inmate_id' => '1',
+				'who' => 'TestUser',
+				'whoId' => '1',
 				'role' => 'member',
-				'subject' => 'TestProject'
+				'what' => 'TestProject'
 			)
 		);
 		$this->assertEqual($result, $expected);
@@ -174,10 +174,10 @@ class UserTestCase extends CakeTestCase {
 		$result = $this->User->lockAs('ninja_at', 'cakephp');
 		$expected = array(
 			array(
-				'inmate' => 'TestUser',
-				'inmate_id' => '1',
+				'who' => 'TestUser',
+				'whoId' => '1',
 				'role' => 'ninja',
-				'subject' => 'cakephp'
+				'what' => 'cakephp'
 			)
 		);
 		$this->assertEqual($result, $expected);
@@ -192,10 +192,10 @@ class UserTestCase extends CakeTestCase {
 		$result = $this->User->lockAs('cakephp', 'coder');
 		$expected = array(
 			array(
-				'inmate' => 'TestUser',
-				'inmate_id' => '1',
+				'who' => 'TestUser',
+				'whoId' => '1',
 				'role' => 'cakephp',
-				'subject' => 'coder'
+				'what' => 'coder'
 			)
 		);
 		$this->assertEqual($result, $expected);
@@ -204,10 +204,10 @@ class UserTestCase extends CakeTestCase {
 		$result = $this->User->lockAs('A_w-e^s+_me_by', 'design');
 		$expected = array(
 			array(
-				'inmate' => 'TestUser',
-				'inmate_id' => '1',
+				'who' => 'TestUser',
+				'whoId' => '1',
 				'role' => 'A_w-e^s+_me',
-				'subject' => 'design'
+				'what' => 'design'
 			)
 		);
 		$this->assertEqual($result, $expected);
@@ -227,32 +227,32 @@ class UserTestCase extends CakeTestCase {
 		// huge array incoming... run!!
 		$expected = array(
 			array(
-				'inmate' => 'TestUser',
-				'inmate_id' => '1',
+				'who' => 'TestUser',
+				'whoId' => '1',
 				'role' => 'master'
 			),array(
-				'inmate' => 'TestUser',
-				'inmate_id' => '1',
+				'who' => 'TestUser',
+				'whoId' => '1',
 				'role' => 'toocool'
 			),array(
-				'inmate' => 'TestUser',
-				'inmate_id' => '1',
+				'who' => 'TestUser',
+				'whoId' => '1',
 				'role' => 'gettin'
 			),array(
-				'inmate' => 'TestUser',
-				'inmate_id' => '1',
+				'who' => 'TestUser',
+				'whoId' => '1',
 				'role' => 'passing'
 			),array(
-				'inmate' => 'TestUser',
-				'inmate_id' => '1',
+				'who' => 'TestUser',
+				'whoId' => '1',
 				'role' => 'rocking'
 			),array(
-				'inmate' => 'TestUser',
-				'inmate_id' => '1',
+				'who' => 'TestUser',
+				'whoId' => '1',
 				'role' => 'winning'
 			),array(
-				'inmate' => 'TestUser',
-				'inmate_id' => '1',
+				'who' => 'TestUser',
+				'whoId' => '1',
 				'role' => 'jailson_rawks'
 			)
 		);
@@ -292,8 +292,8 @@ class UserTestCase extends CakeTestCase {
 		$result = $this->User->lockAs('writer');
 		$expected = array(
 			array(
-				'inmate' => 'TestUser',
-				'inmate_id' => '1',
+				'who' => 'TestUser',
+				'whoId' => '1',
 				'role' => 'writer'
 			)
 		);
@@ -313,11 +313,11 @@ class UserTestCase extends CakeTestCase {
 		$result = $this->User->lockAs('member', $this->Project);
 		$expected = array(
 			array(
-				'inmate' => 'TestUser',
-				'inmate_id' => '1',
+				'who' => 'TestUser',
+				'whoId' => '1',
 				'role' => 'member',
-				'subject' => 'TestProject',
-				'subject_id' => '1'
+				'what' => 'TestProject',
+				'whatId' => '1'
 			)
 		);
 		$this->assertEqual($result, $expected);
@@ -342,11 +342,11 @@ class UserTestCase extends CakeTestCase {
 		$result = $this->User->lockAs('owner', $this->Project);
 		$expected = array(
 			array(
-				'inmate' => 'TestUser',
-				'inmate_id' => '1',
+				'who' => 'TestUser',
+				'whoId' => '1',
 				'role' => 'owner',
-				'subject' => 'TestProject',
-				'subject_id' => '1'
+				'what' => 'TestProject',
+				'whatId' => '1'
 			)
 		);
 		$this->assertEqual($result, $expected);	
@@ -388,8 +388,8 @@ class UserTestCase extends CakeTestCase {
 		$result = $this->User->is('anon', true);
 		$expected = array(
 			array(
-				'inmate' => 'TestUser',
-				'inmate_id' => '1',
+				'who' => 'TestUser',
+				'whoId' => '1',
 				'role' => 'anon',
 			)
 		);
@@ -411,12 +411,12 @@ class UserTestCase extends CakeTestCase {
 		$result = $this->User->is(array('not', 'found'), true);
 		$expected = array(
 			array(
-				'inmate' => 'TestUser',
-				'inmate_id' => '1',
+				'who' => 'TestUser',
+				'whoId' => '1',
 				'role' => 'not',
 			),array(
-				'inmate' => 'TestUser',
-				'inmate_id' => '1',
+				'who' => 'TestUser',
+				'whoId' => '1',
 				'role' => 'found',
 			)
 		);
@@ -435,11 +435,11 @@ class UserTestCase extends CakeTestCase {
 		$result = $this->User->lockAs('member', $this->Project);
 		$expected = array(
 			array(
-				'inmate' => 'TestUser',
-				'inmate_id' => '1',
+				'who' => 'TestUser',
+				'whoId' => '1',
 				'role' => 'member',
-				'subject' => 'TestProject',
-				'subject_id' => '1'
+				'what' => 'TestProject',
+				'whatId' => '1'
 			)
 		);
 		$this->assertEqual($result, $expected);
@@ -456,11 +456,11 @@ class UserTestCase extends CakeTestCase {
 		$result = $this->User->is('singer', $this->Project, true);
 		$expected = array(
 			array(
-				'inmate' => 'TestUser',
-				'inmate_id' => '1',
+				'who' => 'TestUser',
+				'whoId' => '1',
 				'role' => 'singer',
-				'subject' => 'TestProject',
-				'subject_id' => '1'
+				'what' => 'TestProject',
+				'whatId' => '1'
 			)
 		);
 		$this->assertEqual($result, $expected);
@@ -494,8 +494,8 @@ class UserTestCase extends CakeTestCase {
 		$result = $this->User->isNot('singer', true);
 		$expected = array(
 			array(
-				'inmate' => 'TestUser',
-				'inmate_id' => '1',
+				'who' => 'TestUser',
+				'whoId' => '1',
 				'role' => 'singer',
 			)
 		);
@@ -517,12 +517,12 @@ class UserTestCase extends CakeTestCase {
 		$result = $this->User->is(array('not', 'found'), true);
 		$expected = array(
 			array(
-				'inmate' => 'TestUser',
-				'inmate_id' => '1',
+				'who' => 'TestUser',
+				'whoId' => '1',
 				'role' => 'not',
 			),array(
-				'inmate' => 'TestUser',
-				'inmate_id' => '1',
+				'who' => 'TestUser',
+				'whoId' => '1',
 				'role' => 'found',
 			)
 		);
@@ -537,12 +537,12 @@ class UserTestCase extends CakeTestCase {
 		
 		$expected = array(
 			array(
-				'inmate' => 'TestUser',
-				'inmate_id' => '1',
+				'who' => 'TestUser',
+				'whoId' => '1',
 				'role' => 'found',
 			),array(
-				'inmate' => 'TestUser',
-				'inmate_id' => '1',
+				'who' => 'TestUser',
+				'whoId' => '1',
 				'role' => 'not',
 			)
 		);
@@ -562,17 +562,17 @@ class UserTestCase extends CakeTestCase {
 		$result = $this->User->lockAs(array('member_in', 'singer_of'), $this->Project);
 		$expected = array(
 			array(
-				'inmate' => 'TestUser',
-				'inmate_id' => '1',
+				'who' => 'TestUser',
+				'whoId' => '1',
 				'role' => 'member',
-				'subject' => 'TestProject',
-				'subject_id' => '1'
+				'what' => 'TestProject',
+				'whatId' => '1'
 			),array(
-				'inmate' => 'TestUser',
-				'inmate_id' => '1',
+				'who' => 'TestUser',
+				'whoId' => '1',
 				'role' => 'singer',
-				'subject' => 'TestProject',
-				'subject_id' => '1'
+				'what' => 'TestProject',
+				'whatId' => '1'
 			)
 		);
 		$this->assertEqual($result, $expected);
@@ -589,11 +589,11 @@ class UserTestCase extends CakeTestCase {
 		$result = $this->User->isNot('member_in', $this->Project, true);
 		$expected = array(
 			array(
-				'inmate' => 'TestUser',
-				'inmate_id' => '1',
+				'who' => 'TestUser',
+				'whoId' => '1',
 				'role' => 'member',
-				'subject' => 'TestProject',
-				'subject_id' => '1'
+				'what' => 'TestProject',
+				'whatId' => '1'
 			)
 		);
 		$this->assertEqual($result, $expected);
@@ -619,14 +619,14 @@ class UserTestCase extends CakeTestCase {
 		$expected = array(
 			'singer' => array(
 				array(
-					'inmate' => 'TestUser',
-					'inmate_id' => '1',
+					'who' => 'TestUser',
+					'whoId' => '1',
 					'role' => 'singer',
 				),array(
-					'inmate' => 'TestUser',
-					'inmate_id' => '1',
+					'who' => 'TestUser',
+					'whoId' => '1',
 					'role' => 'singer',
-					'subject' => 'pianist',
+					'what' => 'pianist',
 				)
 			)
 		);
@@ -661,10 +661,10 @@ class UserTestCase extends CakeTestCase {
 		$expected = array(
 			'singer' => array(
 				array(
-					'inmate' => 'TestUser',
-					'inmate_id' => '1',
+					'who' => 'TestUser',
+					'whoId' => '1',
 					'role' => 'singer',
-					'subject' => 'pianist',
+					'what' => 'pianist',
 				)
 			)
 		);
@@ -684,10 +684,10 @@ class UserTestCase extends CakeTestCase {
 		$expected = array(
 			'singer' => array(
 				array(
-					'inmate' => 'TestUser',
-					'inmate_id' => '1',
+					'who' => 'TestUser',
+					'whoId' => '1',
 					'role' => 'singer',
-					'subject' => 'pianist',
+					'what' => 'pianist',
 				)
 			)
 		);
@@ -719,45 +719,45 @@ class UserTestCase extends CakeTestCase {
 		$expected = array(
 			'member' => array(
 				array(
-					'inmate' => 'TestUser',
-					'inmate_id' => '1',
+					'who' => 'TestUser',
+					'whoId' => '1',
 					'role' => 'member',
-					'subject' => 'TestProject',
-					'subject_id' => '1'
+					'what' => 'TestProject',
+					'whatId' => '1'
 				),array(
-					'inmate' => 'TestUser',
-					'inmate_id' => '1',
+					'who' => 'TestUser',
+					'whoId' => '1',
 					'role' => 'member',
-					'subject' => 'TestProject',
-					'subject_id' => '2'
+					'what' => 'TestProject',
+					'whatId' => '2'
 				),array(
-					'inmate' => 'TestUser',
-					'inmate_id' => '1',
+					'who' => 'TestUser',
+					'whoId' => '1',
 					'role' => 'member',
-					'subject' => 'TestProject',
-					'subject_id' => '3'
+					'what' => 'TestProject',
+					'whatId' => '3'
 				)
 			),
 			'singer' => array(
 				array(
-					'inmate' => 'TestUser',
-					'inmate_id' => '1',
+					'who' => 'TestUser',
+					'whoId' => '1',
 					'role' => 'singer',
 				),array(
-					'inmate' => 'TestUser',
-					'inmate_id' => '1',
+					'who' => 'TestUser',
+					'whoId' => '1',
 					'role' => 'singer',
-					'subject' => 'live',
+					'what' => 'live',
 				),array(
-					'inmate' => 'TestUser',
-					'inmate_id' => '1',
+					'who' => 'TestUser',
+					'whoId' => '1',
 					'role' => 'singer',
-					'subject' => 'pianist',
+					'what' => 'pianist',
 				),array(
-					'inmate' => 'TestUser',
-					'inmate_id' => '1',
+					'who' => 'TestUser',
+					'whoId' => '1',
 					'role' => 'singer',
-					'subject' => 'tenor',
+					'what' => 'tenor',
 				),
 			),
 		);
@@ -768,10 +768,10 @@ class UserTestCase extends CakeTestCase {
 		$result = $this->User->free('singer', 'pianist');
 		$expected = array(
 			array(
-				'inmate' => 'TestUser',
-				'inmate_id' => '1',
+				'who' => 'TestUser',
+				'whoId' => '1',
 				'role' => 'singer',
-				'subject' => 'pianist',
+				'what' => 'pianist',
 			)	
 		);
 		$this->assertEqual($result, $expected);
@@ -787,24 +787,24 @@ class UserTestCase extends CakeTestCase {
 		$result = $this->User->free('singer');
 		$expected = array(
 			array(
-				'inmate' => 'TestUser',
-				'inmate_id' => '1',
+				'who' => 'TestUser',
+				'whoId' => '1',
 				'role' => 'singer',
 			),array(
-				'inmate' => 'TestUser',
-				'inmate_id' => '1',
+				'who' => 'TestUser',
+				'whoId' => '1',
 				'role' => 'singer',
-				'subject' => 'live',
+				'what' => 'live',
 			),array(
-				'inmate' => 'TestUser',
-				'inmate_id' => '1',
+				'who' => 'TestUser',
+				'whoId' => '1',
 				'role' => 'singer',
-				'subject' => 'pianist',
+				'what' => 'pianist',
 			),array(
-				'inmate' => 'TestUser',
-				'inmate_id' => '1',
+				'who' => 'TestUser',
+				'whoId' => '1',
 				'role' => 'singer',
-				'subject' => 'tenor',
+				'what' => 'tenor',
 			)
 		);
 		$this->assertEqual($result, $expected);
@@ -813,23 +813,23 @@ class UserTestCase extends CakeTestCase {
 		$result = $this->User->free('member', 'TestProject');
 		$expected = array(
 			array(
-				'inmate' => 'TestUser',
-				'inmate_id' => '1',
+				'who' => 'TestUser',
+				'whoId' => '1',
 				'role' => 'member',
-				'subject' => 'TestProject',
-				'subject_id' => '1'
+				'what' => 'TestProject',
+				'whatId' => '1'
 			),array(
-				'inmate' => 'TestUser',
-				'inmate_id' => '1',
+				'who' => 'TestUser',
+				'whoId' => '1',
 				'role' => 'member',
-				'subject' => 'TestProject',
-				'subject_id' => '2'
+				'what' => 'TestProject',
+				'whatId' => '2'
 			),array(
-				'inmate' => 'TestUser',
-				'inmate_id' => '1',
+				'who' => 'TestUser',
+				'whoId' => '1',
 				'role' => 'member',
-				'subject' => 'TestProject',
-				'subject_id' => '3'
+				'what' => 'TestProject',
+				'whatId' => '3'
 			)
 		);		
 		$this->assertEqual($result, $expected);
@@ -845,23 +845,23 @@ class UserTestCase extends CakeTestCase {
 		$result = $this->User->free('member');
 		$expected = array(
 			array(
-				'inmate' => 'TestUser',
-				'inmate_id' => '1',
+				'who' => 'TestUser',
+				'whoId' => '1',
 				'role' => 'member',
-				'subject' => 'TestProject',
-				'subject_id' => '1'
+				'what' => 'TestProject',
+				'whatId' => '1'
 			),array(
-				'inmate' => 'TestUser',
-				'inmate_id' => '1',
+				'who' => 'TestUser',
+				'whoId' => '1',
 				'role' => 'member',
-				'subject' => 'TestProject',
-				'subject_id' => '2'
+				'what' => 'TestProject',
+				'whatId' => '2'
 			),array(
-				'inmate' => 'TestUser',
-				'inmate_id' => '1',
+				'who' => 'TestUser',
+				'whoId' => '1',
 				'role' => 'member',
-				'subject' => 'TestProject',
-				'subject_id' => '3'
+				'what' => 'TestProject',
+				'whatId' => '3'
 			)
 		);		
 		$this->assertEqual($result, $expected);
@@ -881,45 +881,45 @@ class UserTestCase extends CakeTestCase {
 		$expected = array(
 			'member' => array(
 				array(
-					'inmate' => 'TestUser',
-					'inmate_id' => '1',
+					'who' => 'TestUser',
+					'whoId' => '1',
 					'role' => 'member',
-					'subject' => 'TestProject',
-					'subject_id' => '1'
+					'what' => 'TestProject',
+					'whatId' => '1'
 				),array(
-					'inmate' => 'TestUser',
-					'inmate_id' => '1',
+					'who' => 'TestUser',
+					'whoId' => '1',
 					'role' => 'member',
-					'subject' => 'TestProject',
-					'subject_id' => '2'
+					'what' => 'TestProject',
+					'whatId' => '2'
 				),array(
-					'inmate' => 'TestUser',
-					'inmate_id' => '1',
+					'who' => 'TestUser',
+					'whoId' => '1',
 					'role' => 'member',
-					'subject' => 'TestProject',
-					'subject_id' => '3'
+					'what' => 'TestProject',
+					'whatId' => '3'
 				)
 			),
 			'singer' => array(
 				array(
-					'inmate' => 'TestUser',
-					'inmate_id' => '1',
+					'who' => 'TestUser',
+					'whoId' => '1',
 					'role' => 'singer',
 				),array(
-					'inmate' => 'TestUser',
-					'inmate_id' => '1',
+					'who' => 'TestUser',
+					'whoId' => '1',
 					'role' => 'singer',
-					'subject' => 'live',
+					'what' => 'live',
 				),array(
-					'inmate' => 'TestUser',
-					'inmate_id' => '1',
+					'who' => 'TestUser',
+					'whoId' => '1',
 					'role' => 'singer',
-					'subject' => 'pianist',
+					'what' => 'pianist',
 				),array(
-					'inmate' => 'TestUser',
-					'inmate_id' => '1',
+					'who' => 'TestUser',
+					'whoId' => '1',
 					'role' => 'singer',
-					'subject' => 'tenor',
+					'what' => 'tenor',
 				),
 			),
 		);
@@ -929,42 +929,42 @@ class UserTestCase extends CakeTestCase {
 		$result = $this->User->free();
 		$expected = array(
 			array(
-				'inmate' => 'TestUser',
-				'inmate_id' => '1',
+				'who' => 'TestUser',
+				'whoId' => '1',
 				'role' => 'member',
-				'subject' => 'TestProject',
-				'subject_id' => '1'
+				'what' => 'TestProject',
+				'whatId' => '1'
 			),array(
-				'inmate' => 'TestUser',
-				'inmate_id' => '1',
+				'who' => 'TestUser',
+				'whoId' => '1',
 				'role' => 'member',
-				'subject' => 'TestProject',
-				'subject_id' => '2'
+				'what' => 'TestProject',
+				'whatId' => '2'
 			),array(
-				'inmate' => 'TestUser',
-				'inmate_id' => '1',
+				'who' => 'TestUser',
+				'whoId' => '1',
 				'role' => 'member',
-				'subject' => 'TestProject',
-				'subject_id' => '3'
+				'what' => 'TestProject',
+				'whatId' => '3'
 			),array(
-				'inmate' => 'TestUser',
-				'inmate_id' => '1',
+				'who' => 'TestUser',
+				'whoId' => '1',
 				'role' => 'singer',
 			),array(
-				'inmate' => 'TestUser',
-				'inmate_id' => '1',
+				'who' => 'TestUser',
+				'whoId' => '1',
 				'role' => 'singer',
-				'subject' => 'live',
+				'what' => 'live',
 			),array(
-				'inmate' => 'TestUser',
-				'inmate_id' => '1',
+				'who' => 'TestUser',
+				'whoId' => '1',
 				'role' => 'singer',
-				'subject' => 'pianist',
+				'what' => 'pianist',
 			),array(
-				'inmate' => 'TestUser',
-				'inmate_id' => '1',
+				'who' => 'TestUser',
+				'whoId' => '1',
 				'role' => 'singer',
-				'subject' => 'tenor',
+				'what' => 'tenor',
 			),
 		);		
 		$this->assertEqual($result, $expected);
@@ -983,14 +983,14 @@ class UserTestCase extends CakeTestCase {
 		$expected = array(
 			'singer' => array(
 				array(
-					'inmate' => 'TestUser',
-					'inmate_id' => '1',
+					'who' => 'TestUser',
+					'whoId' => '1',
 					'role' => 'singer',
 				),array(
-					'inmate' => 'TestUser',
-					'inmate_id' => '1',
+					'who' => 'TestUser',
+					'whoId' => '1',
 					'role' => 'singer',
-					'subject' => 'pianist',
+					'what' => 'pianist',
 				)
 			)
 		);
