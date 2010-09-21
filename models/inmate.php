@@ -12,6 +12,7 @@
  * @copyright (c) 2010, Kjell Bublitz (http://cakealot.com)
  */
 App::import('Core', 'Set');
+App::import('Lib', 'Jailson.Storage');
 /**
  * Jailson - Inmate Model
  * 
@@ -37,7 +38,9 @@ class Inmate extends JailsonAppModel {
 		
 		$insert = array();
 		foreach ($newKeys as $key) {
-			$insert[]['key'] = $key;
+			$insert[] = array_merge(
+				array('key' => $key), Storage::unpack($key)
+			);
 		}
 		
 		if (count($newKeys))
