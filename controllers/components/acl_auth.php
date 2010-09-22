@@ -341,6 +341,9 @@ class AclAuthComponent extends Object {
 			if (is_numeric($action)) 
 				$action = $this->_Controller->action;
 			
+			if (!is_array($requiredRoles))
+				$requiredRoles = array($requiredRoles);
+			
 			// support inheritance
 			if (isset($targetArray["{$controller}/{$action}"])) {
 				$previousRoles = $targetArray["{$controller}/{$action}"];
