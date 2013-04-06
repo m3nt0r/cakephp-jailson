@@ -240,6 +240,62 @@ class InmateBehavior extends ModelBehavior {
 	}
 	
 	/**
+	 * Just for semantics: Alias to "is"
+	 *
+	 * @param 	object 	$model
+	 * @param 	string 	$role   	member_of, created_by, seen_at, image_for, based_on
+	 * @param 	mixed 	$sentence 	model object or any string
+	 * @param 	boolean $create 	(optional) if true: make this semantic become real
+	 * 
+	 * @return 	array
+	 */
+	function did($model) {
+		return call_user_method_array('is', $this, func_get_args());
+	}
+	
+	/**
+	 * Just for semantics: Alias to "is"
+	 *
+	 * @param 	object 	$model
+	 * @param 	string 	$role   	member_of, created_by, seen_at, image_for, based_on
+	 * @param 	mixed 	$sentence 	model object or any string
+	 * @param 	boolean $create 	(optional) if true: make this semantic become real
+	 * 
+	 * @return 	array
+	 */
+	function was($model) {
+		return call_user_method_array('is', $this, func_get_args());
+	}
+	
+	/**
+	 * Just for semantics: Alias to "is"
+	 *
+	 * @param 	object 	$model
+	 * @param 	string 	$role   	member_of, created_by, seen_at, image_for, based_on
+	 * @param 	mixed 	$sentence 	model object or any string
+	 * @param 	boolean $create 	(optional) if true: make this semantic become real
+	 * 
+	 * @return 	array
+	 */
+	function can($model) {
+		return call_user_method_array('is', $this, func_get_args());
+	}
+	
+	/**
+	 * Just for semantics: Alias to "is"
+	 *
+	 * @param 	object 	$model
+	 * @param 	string 	$role   	member_of, created_by, seen_at, image_for, based_on
+	 * @param 	mixed 	$sentence 	model object or any string
+	 * @param 	boolean $create 	(optional) if true: make this semantic become real
+	 * 
+	 * @return 	array
+	 */
+	function isIn($model) {
+		return call_user_method_array('is', $this, func_get_args());
+	}
+	
+	/**
 	 * Just for semantics
 	 *
 	 * @param 	object 	$model

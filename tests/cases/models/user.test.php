@@ -608,6 +608,68 @@ class UserTestCase extends CakeTestCase {
 	}
 	
 	# =================================================
+	# Inmate::did()
+	# =================================================
+	
+	public function testAliasedIs() {
+		
+		$this->User->id = 1;
+		
+		// single
+		$result = $this->User->was('singer');
+		$this->assertTrue($result);
+		
+		// with subject
+		$result = $this->User->was('singer', 'pianist');
+		$this->assertTrue($result);
+		
+		// not found
+		$result = $this->User->was('anon');
+		$this->assertFalse($result);
+		
+		// create switch
+		$result = $this->User->was('anon', true);
+		$expected = array(
+			array(
+				'who' => 'TestUser',
+				'whoId' => '1',
+				'role' => 'anon',
+			)
+		);
+		$this->assertEqual($result, $expected);
+		
+		// was created, same query yields true now
+		$result = $this->User->was('anon');
+		$this->assertTrue($result);
+		
+		// test multiple
+		$result = $this->User->was(array('anon', 'singer'));
+		$this->assertTrue($result);
+		
+		// test multiple not found
+		$result = $this->User->was(array('not', 'found'));
+		$this->assertFalse($result);
+		
+		// create multiple with switch
+		$result = $this->User->was(array('not', 'found'), true);
+		$expected = array(
+			array(
+				'who' => 'TestUser',
+				'whoId' => '1',
+				'role' => 'not',
+			),array(
+				'who' => 'TestUser',
+				'whoId' => '1',
+				'role' => 'found',
+			)
+		);
+		$this->assertEqual($result, $expected);
+		
+		$result = $this->User->was(array('not', 'found'));
+		$this->assertTrue($result);
+	}
+	
+	# =================================================
 	# Inmate::roles()
 	# =================================================
 	
