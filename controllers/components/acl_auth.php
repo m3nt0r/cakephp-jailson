@@ -246,7 +246,11 @@ class AclAuthComponent extends Object {
 	 */
 	protected function _importFromIni() {
 		
-		$iniFilePath = APP . $this->loadFrom;
+		if (strstr(APP, dirname(__FILE__)) !== false) {
+			$iniFilePath = APP . $this->loadFrom;	
+		} else {
+			$iniFilePath = ROOT . DS . $this->loadFrom;	
+		}
 		
 		if (!is_file($iniFilePath)) {
 			trigger_error("Could not read INI file at '{$iniFilePath}'. Wrong path maybe?", E_USER_WARNING);
