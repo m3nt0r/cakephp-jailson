@@ -116,7 +116,7 @@ World without Objects
 In all the previous examples it was all about A-something-B and A-plenty-B. But what if there is no B?
 
 Jailson is just designed to understand Model-objects, but first of all a tool to describe stuff using simple strings.
-That way you can omit the object parameter and replace it with arbitary string of your choice.
+That way you can omit the object parameter and replace it with arbitrary string of your choice.
 
 ```php
 $this->User->is('living_in', 'Europe');
